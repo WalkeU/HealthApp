@@ -7,7 +7,7 @@ services:
     volumes:
       - healthapp_data:/data
     ports:
-      - "${BACKEND_PORT:-3001}:${BACKEND_PORT:-3001}"
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     environment:
       - NODE_ENV=production
     restart: unless-stopped
@@ -18,7 +18,10 @@ services:
       dockerfile: Dockerfile
     env_file: .env
     ports:
-      - "${FRONTEND_PROD_PORT:-80}:80"
+      - "${FRONTEND_PROD_PORT}:80"
+    environment:
+      # nginx template needs BACKEND_PORT to proxy to the right backend port
+      - BACKEND_PORT=${BACKEND_PORT}
     depends_on:
       - backend
     restart: unless-stopped
