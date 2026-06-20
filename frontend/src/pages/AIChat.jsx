@@ -1,270 +1,309 @@
-import { useState, useRef, useEffect } from 'react'
-import { Bot, Send, Sparkles, Settings } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Bot, Sparkles, Copy, Check, RefreshCw, ChevronDown, ChevronRight } from 'lucide-react'
 import TopBar from '../components/layout/TopBar.jsx'
+import Card from '../components/ui/Card.jsx'
 import Button from '../components/ui/Button.jsx'
 import Spinner from '../components/ui/Spinner.jsx'
+import Badge from '../components/ui/Badge.jsx'
 import { useFetch } from '../hooks/useFetch.js'
 import { api } from '../api/client.js'
 
-function useAiStatus() {
-  return useFetch(() => api.getAiStatus(), [])
+function useAnalysis() {
+  return useFetch(() => api.getAnalysis(), [])
 }
 
 export default function AIChat() {
-  const navigate = useNavigate()
-  const { data: status, loading } = useAiStatus()
-  const [messages, setMessages] = useState([])
-  const [input, setInput] = useState('')
-  const [sending, setSending] = useState(false)
-  const bottomRef = useRef()
+  const { data: analysis, loading, refetch } = useAnalysis()
+  const [promptVisible, setPromptVisible] = useState(false)
+  const [prompt, setPrompt] = useState(null)
+  const [loadingPrompt, setLoadingPrompt] = useState(false)
+  const [copied, setCopied] = useState(false)
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
-  async function send() {
-    const text = input.trim()
-    if (!text || sending) return
-    setInput('')
-    setMessages(prev => [...prev, { role: 'user', content: text }])
-    setSending(true)
+  async function loadPrompt() {
+    setLoadingPrompt(true)
     try {
-      const reply = await api.aiChat([...messages, { role: 'user', content: text }])
-      setMessages(prev => [...prev, { role: 'assistant', content: reply.content || reply.error || 'No response' }])
-    } catch (e) {
-      setMessages(prev => [...prev, { role: 'assistant', content: `Error: ${e.message}`, error: true }])
+      const r = await api.getAiContext()
+      setPrompt(r.prompt)
+      setPromptVisible(true)
     } finally {
-      setSending(false)
+      setLoadingPrompt(false)
     }
   }
 
-  if (loading) return <div className="page"><TopBar title="AI Coach" /><Spinner /></div>
-
-  const enabled = status?.enabled
+  async function copyPrompt() {
+    if (!prompt) await loadPrompt()
+    navigator.clipboard.writeText(prompt)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
-    <div className="page" style={{ display: 'flex', flexDirection: 'column', height: 'calc(100dvh - 56px)', gap: 0, padding: '28px 32px 0' }}>
-      <TopBar title="AI Coach">
-        {!enabled && (
-          <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>
-            <Settings size={13} /> Configure
-          </Button>
-        )}
+    <div className="page">
+      <TopBar title="AI Elemzés">
+        <Button variant="ghost" size="sm" onClick={refetch} disabled={loading}>
+          <RefreshCw size={13} style={loading ? { animation: 'spin 1s linear infinite' } : {}} />
+          Frissítés
+        </Button>
       </TopBar>
 
-      {!enabled ? (
-        <div style={styles.placeholder}>
-          <div style={styles.placeholderIcon}>
-            <Bot size={32} style={{ color: 'var(--text-3)' }} />
-          </div>
-          <div style={styles.placeholderTitle}>AI Integration — Phase 2</div>
-          <div style={styles.placeholderDesc}>
-            The AI coach isn't configured yet. Once enabled, you can ask questions like:
-          </div>
-          <div style={styles.exampleGrid}>
-            {EXAMPLES.map((ex, i) => (
-              <div key={i} style={styles.example}>
-                <Sparkles size={11} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 1 }} />
-                <span>{ex}</span>
-              </div>
-            ))}
-          </div>
-          <div style={styles.providerRow}>
-            <span style={styles.providerLabel}>Supported providers:</span>
-            {['Claude (Anthropic)', 'OpenAI', 'Ollama (local)'].map(p => (
-              <span key={p} style={styles.provider}>{p}</span>
-            ))}
-          </div>
-          <Button onClick={() => navigate('/settings')} style={{ marginTop: 24 }}>
-            <Settings size={13} /> Open Settings
-          </Button>
-        </div>
+      {loading ? <Spinner /> : !analysis ? (
+        <div style={{ color: 'var(--text-3)', fontSize: 13 }}>Nincs elegendő adat az elemzéshez.</div>
       ) : (
-        <>
-          {/* Messages */}
-          <div style={styles.messages}>
-            {messages.length === 0 && (
-              <div style={styles.chatWelcome}>
-                <Bot size={20} style={{ color: 'var(--accent)' }} />
-                <span>Ask me about your training, recovery, or health trends.</span>
-              </div>
-            )}
-            {messages.map((msg, i) => (
-              <div key={i} style={{ ...styles.msg, ...(msg.role === 'user' ? styles.msgUser : styles.msgAi), ...(msg.error ? { color: 'var(--danger)' } : {}) }}>
-                {msg.role === 'assistant' && <Bot size={14} style={{ color: 'var(--accent)', flexShrink: 0, marginTop: 2 }} />}
-                <div>{msg.content}</div>
-              </div>
-            ))}
-            {sending && (
-              <div style={{ ...styles.msg, ...styles.msgAi }}>
-                <Bot size={14} style={{ color: 'var(--accent)', flexShrink: 0 }} />
-                <div style={styles.typing}><span /><span /><span /></div>
-              </div>
-            )}
-            <div ref={bottomRef} />
+        <div style={styles.layout}>
+          {/* ── Scores row ── */}
+          <div style={styles.scoreGrid}>
+            <ScoreCard label="Felépülési készenlét" value={analysis.scores.recovery} label2={analysis.scores.recovery_label} />
+            <ScoreCard label="Edzéskockázat" value={analysis.scores.training_risk} label2={analysis.scores.risk_label} invert />
+            <ScoreCard label="Alváskvalitás" value={analysis.scores.sleep_quality} />
+            <ScoreCard label="Forma index" value={analysis.scores.overall} />
           </div>
 
-          {/* Input */}
-          <div style={styles.inputRow}>
-            <input
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())}
-              placeholder="Ask about your training…"
-              style={styles.chatInput}
-              disabled={sending}
-            />
-            <Button onClick={send} disabled={sending || !input.trim()}>
-              <Send size={13} />
-            </Button>
+          {/* ── Flags ── */}
+          {analysis.flags.length > 0 && (
+            <Card padding="0" style={{ marginBottom: 16 }}>
+              <div style={styles.sectionHeader}>
+                <span style={styles.sectionTitle}>Azonosított jelek</span>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  {analysis.flags.filter(f => f.level === 'RED').length > 0 && (
+                    <Badge color="danger">{analysis.flags.filter(f => f.level === 'RED').length} kritikus</Badge>
+                  )}
+                  {analysis.flags.filter(f => f.level === 'YELLOW').length > 0 && (
+                    <Badge color="warning">{analysis.flags.filter(f => f.level === 'YELLOW').length} figyelő</Badge>
+                  )}
+                </div>
+              </div>
+              <div style={{ padding: '8px 0' }}>
+                {analysis.flags.map((flag, i) => (
+                  <FlagRow key={i} flag={flag} />
+                ))}
+              </div>
+            </Card>
+          )}
+
+          {/* ── Key metrics ── */}
+          <div style={styles.metricsGrid}>
+            <MetricBlock title="Edzésterhelés">
+              <MetricRow label="ACWR" value={analysis.metrics.acwr ?? '—'} note={acwrLabel(analysis.metrics.acwr)} />
+              <MetricRow label="Heti km (akut)" value={analysis.metrics.acute_km != null ? `${analysis.metrics.acute_km} km` : '—'} />
+              <MetricRow label="Krónikus átlag" value={analysis.metrics.chronic_km != null ? `${analysis.metrics.chronic_km?.toFixed(1)} km/hét` : '—'} />
+              <MetricRow label="Mileage trend" value={analysis.metrics.mileage_trend} />
+              {analysis.metrics.vo2_latest && (
+                <MetricRow label="VO2max" value={`${analysis.metrics.vo2_latest} ml/kg/min`} note={analysis.metrics.vo2_trend} />
+              )}
+            </MetricBlock>
+
+            <MetricBlock title="Felépülés">
+              <MetricRow label="HRV (utolsó éjjel)" value={analysis.metrics.hrv_last ? `${Math.round(analysis.metrics.hrv_last)} ms` : '—'} />
+              <MetricRow label="HRV baseline %" value={analysis.metrics.hrv_relative != null ? `${Math.round(analysis.metrics.hrv_relative * 100)}%` : '—'} note={analysis.metrics.hrv_status} />
+              <MetricRow label="Nyug. HR (mai)" value={analysis.metrics.hr_today ? `${analysis.metrics.hr_today} bpm` : '—'} />
+              <MetricRow label="HR eltérés" value={analysis.metrics.hr_elevation != null ? `${analysis.metrics.hr_elevation > 0 ? '+' : ''}${analysis.metrics.hr_elevation} bpm` : '—'} />
+              <MetricRow label="Body Battery csúcs" value={analysis.metrics.bb_today_high != null ? `${analysis.metrics.bb_today_high}/100` : '—'} note={analysis.metrics.bb_trend} />
+            </MetricBlock>
+
+            <MetricBlock title="Alvás (7 napos átlag)">
+              <MetricRow label="Hossz" value={fmtH(analysis.metrics.sleep_7avg_s)} />
+              <MetricRow label="Score" value={analysis.metrics.sleep_score_7avg != null ? `${analysis.metrics.sleep_score_7avg?.toFixed(0)}/100` : '—'} />
+              <MetricRow label="Mély alvás" value={analysis.metrics.deep_pct_7avg != null ? `${analysis.metrics.deep_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 16–33%" />
+              <MetricRow label="REM" value={analysis.metrics.rem_pct_7avg != null ? `${analysis.metrics.rem_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 21–31%" />
+              <MetricRow label="Alvásdeficit (7d)" value={analysis.metrics.sleep_debt_7d_h != null ? `${analysis.metrics.sleep_debt_7d_h}h` : '—'} />
+            </MetricBlock>
+
+            <MetricBlock title="Fájdalom (30 nap)">
+              {analysis.metrics.pain_7d?.length === 0 && analysis.metrics.chronic_pain_parts?.length === 0 ? (
+                <div style={{ fontSize: 12, color: 'var(--accent)', padding: '4px 0' }}>✓ Nincs fájdalom bejegyzés</div>
+              ) : (
+                <>
+                  <MetricRow label="Elmúlt 7 nap" value={`${analysis.metrics.pain_7d?.length ?? 0} bejegyzés`} />
+                  <MetricRow label="Átlag súlyosság" value={analysis.metrics.pain_severity_avg > 0 ? `${analysis.metrics.pain_severity_avg?.toFixed(1)}/5` : '—'} />
+                  {analysis.metrics.chronic_pain_parts?.map(cp => (
+                    <MetricRow key={cp.body_part} label={`Krónikus: ${cp.body_part}`} value={`${cp.count}x, súly: ${cp.avg_severity}`} />
+                  ))}
+                </>
+              )}
+            </MetricBlock>
           </div>
-        </>
+
+          {/* ── Recent runs ── */}
+          {analysis.metrics.recent_runs?.length > 0 && (
+            <Card padding="0" style={{ marginBottom: 16 }}>
+              <div style={styles.sectionHeader}>
+                <span style={styles.sectionTitle}>Utolsó futások</span>
+              </div>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                    {['Dátum','Km','Tempó','HR','TE'].map(h => (
+                      <th key={h} style={{ padding: '6px 12px', textAlign: 'left', fontSize: 10, color: 'var(--text-3)', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {analysis.metrics.recent_runs.slice(0, 7).map((r, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                      <td style={{ padding: '8px 12px', color: 'var(--text-2)' }}>{r.date}</td>
+                      <td style={{ padding: '8px 12px', color: 'var(--accent)', fontWeight: 600 }}>{r.km}</td>
+                      <td style={{ padding: '8px 12px' }}>{r.pace_s ? `${Math.floor(r.pace_s/60)}:${String(Math.round(r.pace_s%60)).padStart(2,'0')}` : '—'}</td>
+                      <td style={{ padding: '8px 12px' }}>{r.avg_hr ? `${r.avg_hr} bpm` : '—'}</td>
+                      <td style={{ padding: '8px 12px' }}>{r.aerobic_te ? r.aerobic_te.toFixed(1) : '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Card>
+          )}
+
+          {/* ── Prompt builder ── */}
+          <Card padding="20px">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div>
+                <div style={styles.sectionTitle}>LLM Prompt — bármilyen AI-nak elküldhető</div>
+                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 3 }}>
+                  Másolás után illeszd be a ChatGPT, Claude, Gemini, vagy bármely más AI chatbe.
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Button size="sm" onClick={copyPrompt} disabled={loadingPrompt}>
+                  {copied ? <><Check size={12} /> Másolva!</> : <><Copy size={12} /> Prompt másolása</>}
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => { loadPrompt(); setPromptVisible(v => !v) }}>
+                  {promptVisible ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+                  {promptVisible ? 'Elrejtés' : 'Megtekintés'}
+                </Button>
+              </div>
+            </div>
+
+            {loadingPrompt && <Spinner size={16} />}
+
+            {promptVisible && prompt && (
+              <pre style={styles.promptBox}>{prompt}</pre>
+            )}
+
+            <div style={styles.aiHint}>
+              <Sparkles size={12} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+              <span>
+                A prompt tartalmazza az összes mért adatot, az algoritmus előértékelését, és konkrét kérdéseket az AI számára.
+                Ha konfiguráltad az AI provider-t a Beállításokban, az AI Chat oldalon közvetlenül is elküldheted.
+              </span>
+            </div>
+          </Card>
+        </div>
       )}
 
-      <style>{`
-        @keyframes typing { 0%, 80%, 100% { opacity: 0 } 40% { opacity: 1 } }
-      `}</style>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }
 
-const EXAMPLES = [
-  '"Why am I tired this week?"',
-  '"Am I overtraining?"',
-  '"What does my HRV trend say about my recovery?"',
-  '"Suggest a training plan for next week."',
-  '"Is my left knee pain getting worse?"',
-  '"How does my sleep affect my run pace?"',
-]
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function ScoreCard({ label, value, label2, invert }) {
+  const color = invert
+    ? (value >= 60 ? 'var(--danger)' : value >= 30 ? 'var(--warning)' : 'var(--accent)')
+    : (value >= 75 ? 'var(--accent)' : value >= 50 ? 'var(--warning)' : 'var(--danger)')
+
+  return (
+    <div style={styles.scoreCard}>
+      <div style={styles.scoreLabelTop}>{label}</div>
+      <div style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-0.03em', color, lineHeight: 1 }}>{value}</div>
+      <div style={styles.scoreBar}>
+        <div style={{ width: `${value}%`, height: '100%', background: color, borderRadius: 2, transition: 'width 0.5s' }} />
+      </div>
+      {label2 && <div style={{ fontSize: 10, color, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 4 }}>{label2}</div>}
+    </div>
+  )
+}
+
+function FlagRow({ flag }) {
+  const [open, setOpen] = useState(false)
+  const color = flag.level === 'RED' ? 'var(--danger)' : 'var(--warning)'
+  const bg    = flag.level === 'RED' ? 'var(--danger-10)' : 'var(--warning-10)'
+  return (
+    <div style={{ borderBottom: '1px solid var(--border)', cursor: flag.detail ? 'pointer' : 'default' }}
+         onClick={() => flag.detail && setOpen(v => !v)}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px' }}>
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 12 }}>{flag.message}</div>
+          <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 1 }}>{flag.category}</div>
+        </div>
+        {flag.detail && (
+          open ? <ChevronDown size={12} style={{ color: 'var(--text-3)' }} />
+               : <ChevronRight size={12} style={{ color: 'var(--text-3)' }} />
+        )}
+      </div>
+      {open && flag.detail && (
+        <div style={{ padding: '8px 16px 12px 32px', fontSize: 12, color: 'var(--text-2)', background: bg, lineHeight: 1.6 }}>
+          {flag.detail}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function MetricBlock({ title, children }) {
+  return (
+    <div style={styles.metricBlock}>
+      <div style={styles.metricBlockTitle}>{title}</div>
+      {children}
+    </div>
+  )
+}
+
+function MetricRow({ label, value, note }) {
+  return (
+    <div style={styles.metricRow}>
+      <span style={styles.metricLabel}>{label}</span>
+      <span style={styles.metricValue}>
+        {value}
+        {note && <span style={styles.metricNote}> {note}</span>}
+      </span>
+    </div>
+  )
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function acwrLabel(acwr) {
+  if (acwr == null) return null;
+  if (acwr > 1.5) return '🔴 MAGAS KOCKÁZAT';
+  if (acwr > 1.3) return '🟡 emelt';
+  if (acwr >= 0.8) return '✓ optimális';
+  if (acwr < 0.5) return '↓ alacsony';
+  return null;
+}
+
+function fmtH(s) {
+  if (!s) return '—';
+  return `${Math.floor(s / 3600)}h ${Math.round((s % 3600) / 60)}m`;
+}
 
 const styles = {
-  placeholder: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '48px 24px',
-    textAlign: 'center',
-    gap: 16,
+  layout: { display: 'flex', flexDirection: 'column', gap: 16 },
+  scoreGrid: {
+    display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12,
   },
-  placeholderIcon: {
-    width: 72,
-    height: 72,
-    borderRadius: '50%',
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
+  scoreCard: {
+    background: 'var(--bg-card)', border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)', padding: '16px 18px',
   },
-  placeholderTitle: {
-    fontSize: 18,
-    fontWeight: 700,
-    letterSpacing: '-0.02em',
+  scoreLabelTop: { fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 8 },
+  scoreBar: { height: 4, background: 'var(--bg)', borderRadius: 2, marginTop: 8, overflow: 'hidden' },
+  sectionHeader: { padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+  sectionTitle: { fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-3)' },
+  metricsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 },
+  metricBlock: { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px' },
+  metricBlockTitle: { fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 12 },
+  metricRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '4px 0', borderBottom: '1px solid var(--border)', fontSize: 12 },
+  metricLabel: { color: 'var(--text-2)' },
+  metricValue: { fontWeight: 600 },
+  metricNote: { fontSize: 10, color: 'var(--text-3)', fontWeight: 400 },
+  promptBox: {
+    background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 'var(--radius)',
+    padding: '16px', fontSize: 11, lineHeight: 1.7, color: 'var(--text-2)',
+    maxHeight: 500, overflowY: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginBottom: 12,
   },
-  placeholderDesc: {
-    fontSize: 13,
-    color: 'var(--text-2)',
-    maxWidth: 420,
-    lineHeight: 1.7,
-  },
-  exampleGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-    gap: 8,
-    maxWidth: 560,
-    width: '100%',
-    marginTop: 4,
-  },
-  example: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: 8,
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
-    padding: '10px 12px',
-    fontSize: 12,
-    color: 'var(--text-2)',
-    textAlign: 'left',
-  },
-  providerRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginTop: 8,
-  },
-  providerLabel: {
-    fontSize: 11,
-    color: 'var(--text-3)',
-  },
-  provider: {
-    fontSize: 10,
-    fontWeight: 600,
-    letterSpacing: '0.06em',
-    padding: '2px 8px',
-    borderRadius: 2,
-    background: 'var(--accent-10)',
-    color: 'var(--accent)',
-    border: '1px solid var(--accent-20)',
-  },
-  messages: {
-    flex: 1,
-    overflowY: 'auto',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 12,
-    paddingBottom: 16,
-  },
-  chatWelcome: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    fontSize: 13,
-    color: 'var(--text-2)',
-    padding: '16px 0',
-  },
-  msg: {
-    display: 'flex',
-    gap: 10,
-    maxWidth: 680,
-    fontSize: 13,
-    lineHeight: 1.7,
-  },
-  msgUser: {
-    alignSelf: 'flex-end',
-    background: 'var(--accent-10)',
-    border: '1px solid var(--accent-20)',
-    borderRadius: 'var(--radius)',
-    padding: '10px 14px',
-    color: 'var(--text)',
-  },
-  msgAi: {
-    alignSelf: 'flex-start',
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
-    padding: '10px 14px',
-  },
-  typing: {
-    display: 'flex',
-    gap: 4,
-    alignItems: 'center',
-    height: 20,
-  },
-  inputRow: {
-    display: 'flex',
-    gap: 8,
-    padding: '16px 0 28px',
-    borderTop: '1px solid var(--border)',
-    marginTop: 'auto',
-  },
-  chatInput: {
-    flex: 1,
+  aiHint: {
+    display: 'flex', alignItems: 'flex-start', gap: 8,
+    fontSize: 11, color: 'var(--text-3)', lineHeight: 1.6, marginTop: 4,
   },
 }

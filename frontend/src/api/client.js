@@ -73,7 +73,9 @@ export const api = {
   getConfig: () => get('/config'),
   saveConfig: (data) => post('/config', data),
 
-  // AI (Phase 2)
-  getAiStatus: () => get('/ai/status'),
-  aiChat: (messages) => post('/ai/chat', { messages }),
+  // AI
+  getAiStatus:  ()         => get('/ai/status'),
+  getAnalysis:  ()         => get('/ai/analyze'),
+  getAiContext: ()         => get('/ai/context'),
+  aiChat:       (messages) => post('/ai/chat', { messages }),
 };

@@ -111,6 +111,8 @@ export function initDb() {
       awake_count       INTEGER,
       sleep_feedback    TEXT,
       sleep_need_min    INTEGER,
+      nap_duration_s    INTEGER,
+      nap_count         INTEGER,
       -- Activity
       steps             INTEGER,
       weight_kg         REAL,
@@ -222,6 +224,8 @@ function migrateColumns(db) {
     ['awake_count',       'INTEGER'],
     ['sleep_feedback',    'TEXT'],
     ['sleep_need_min',    'INTEGER'],
+    ['nap_duration_s',    'INTEGER'],
+    ['nap_count',         'INTEGER'],
   ];
 
   for (const [col, def] of activityCols) addColumnIfMissing(db, 'activities',    col, def);

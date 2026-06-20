@@ -152,18 +152,33 @@ function SleepDetail({ record: r }) {
       )}
 
       {/* Sleep feedback from Garmin */}
-      {r.sleep_feedback && (
+      {(r.sleep_feedback || r.nap_duration_s) && (
         <div style={{ ...styles.section, paddingTop: 12 }}>
-          <div style={{
-            fontSize: 11, color: 'var(--accent)', fontWeight: 600,
-            letterSpacing: '0.04em', background: 'var(--accent-10)',
-            border: '1px solid var(--accent-20)', borderRadius: 'var(--radius)',
-            padding: '6px 12px', display: 'inline-block',
-          }}>
-            {r.sleep_feedback.replace(/_/g, ' ')}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+            {r.sleep_feedback && (
+              <div style={{
+                fontSize: 11, fontWeight: 600, letterSpacing: '0.04em',
+                background: r.sleep_feedback.startsWith('POSITIVE') ? 'var(--accent-10)' : 'var(--danger-10)',
+                color: r.sleep_feedback.startsWith('POSITIVE') ? 'var(--accent)' : 'var(--danger)',
+                border: `1px solid ${r.sleep_feedback.startsWith('POSITIVE') ? 'var(--accent-20)' : 'rgba(255,77,106,0.2)'}`,
+                borderRadius: 'var(--radius)', padding: '5px 10px',
+              }}>
+                {r.sleep_feedback.replace(/_/g, ' ')}
+              </div>
+            )}
+            {r.nap_duration_s > 0 && (
+              <div style={{
+                fontSize: 11, fontWeight: 600, letterSpacing: '0.04em',
+                background: 'var(--warning-10)', color: 'var(--warning)',
+                border: '1px solid rgba(255,179,64,0.2)',
+                borderRadius: 'var(--radius)', padding: '5px 10px',
+              }}>
+                + nap {fmtH(r.nap_duration_s)}
+              </div>
+            )}
           </div>
           {r.sleep_need_min && (
-            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6 }}>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 8 }}>
               Sleep need: <span style={{ color: 'var(--text-2)', fontWeight: 600 }}>
                 {Math.floor(r.sleep_need_min / 60)}h {r.sleep_need_min % 60}m
               </span>

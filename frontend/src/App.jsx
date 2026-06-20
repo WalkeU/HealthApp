@@ -24,7 +24,7 @@ export default function App() {
           <Route path="/pain-log"  element={<PainLog />} />
           <Route path="/import"    element={<Import />} />
           <Route path="/settings"  element={<Settings />} />
-          <Route path="/ai"        element={<AIChat />} />
+          <Route path="/insights"  element={<AIChat />} />
         </Routes>
       </main>
     </div>

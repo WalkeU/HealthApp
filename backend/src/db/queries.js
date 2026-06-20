@@ -126,6 +126,7 @@ export const healthQueries = {
         @avg_stress, @body_battery_high, @body_battery_low, @body_battery_charged, @body_battery_drained,
         @avg_respiration, @min_respiration, @max_respiration,
         @avg_sleep_hr, @awake_count, @sleep_feedback, @sleep_need_min,
+        @nap_duration_s, @nap_count,
         @steps, @weight_kg, @raw_json
       )
       ON CONFLICT(date, source) DO UPDATE SET
@@ -144,6 +145,7 @@ export const healthQueries = {
         max_respiration=excluded.max_respiration, avg_sleep_hr=excluded.avg_sleep_hr,
         awake_count=excluded.awake_count, sleep_feedback=excluded.sleep_feedback,
         sleep_need_min=excluded.sleep_need_min,
+        nap_duration_s=excluded.nap_duration_s, nap_count=excluded.nap_count,
         steps=excluded.steps, weight_kg=excluded.weight_kg, raw_json=excluded.raw_json
     `).run(entry);
   },

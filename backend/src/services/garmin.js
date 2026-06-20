@@ -153,6 +153,7 @@ async function syncHealth(client, info, warn) {
         if (entry.rem_sleep_s)       parts.push(`REM=${Math.round(entry.rem_sleep_s/60)}m`);
         if (entry.light_sleep_s)     parts.push(`light=${Math.round(entry.light_sleep_s/60)}m`);
         if (entry.spo2_avg)          parts.push(`SpO2=${entry.spo2_avg}%`);
+        if (entry.nap_duration_s)    parts.push(`nap=${Math.round(entry.nap_duration_s/60)}m`);
         if (entry.body_battery_high != null) parts.push(`BB ${entry.body_battery_low}→${entry.body_battery_high} (+${entry.body_battery_charged ?? '?'}/-${entry.body_battery_drained ?? '?'})`);
         if (entry.steps)             parts.push(`steps=${entry.steps}`);
         info(`  ${dateStr}: ${parts.join(', ') || 'no data'}`);
@@ -228,6 +229,8 @@ async function fetchDailyHealth(client, date) {
   const sleep_feedback    = dto?.sleepScoreFeedback                    ?? null;
   // sleepNeed.baseline/actual are in minutes
   const sleep_need_min    = dto?.sleepNeed?.actual ?? dto?.nextSleepNeed?.actual ?? null;
+  const nap_duration_s    = dto?.napTimeSeconds   ?? null;
+  const nap_count         = Array.isArray(dto?.dailyNapDTOS) ? dto.dailyNapDTOS.length : (nap_duration_s > 0 ? 1 : null);
   const total_steps       = typeof steps === 'number' ? steps : null;
   const weight_kg         = weight?.dailyWeightSummaries?.[0]?.weightInGrams
     ? weight.dailyWeightSummaries[0].weightInGrams / 1000
@@ -267,6 +270,8 @@ async function fetchDailyHealth(client, date) {
     awake_count,
     sleep_feedback,
     sleep_need_min,
+    nap_duration_s,
+    nap_count,
     steps:    total_steps,
     weight_kg,
     // Store full responses so sleepLevels, hrvReadings etc. are queryable later

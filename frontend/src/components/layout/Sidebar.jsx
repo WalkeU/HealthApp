@@ -11,7 +11,7 @@ const NAV = [
   { to: '/notes',    icon: BookOpen,        label: 'Journal' },
   { to: '/pain-log', icon: Zap,             label: 'Pain Log' },
   { to: '/import',   icon: Download,        label: 'Import' },
-  { to: '/ai',       icon: Bot,             label: 'AI' },
+  { to: '/insights', icon: Bot,             label: 'Insights' },
   { to: '/settings', icon: Settings,        label: 'Settings' },
 ]
 
