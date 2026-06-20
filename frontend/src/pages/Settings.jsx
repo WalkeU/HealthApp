@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Save, Bot } from 'lucide-react'
 import TopBar from '../components/layout/TopBar.jsx'
 import Card from '../components/ui/Card.jsx'
@@ -44,7 +44,7 @@ export default function Settings() {
     try {
       const payload = { ...form }
       for (const [k, v] of Object.entries(payload)) {
-        if (v === '••••••••') delete payload[k]
+        if (v === 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢') delete payload[k]
       }
       await api.saveConfig(payload)
       setSaved(true)
@@ -57,13 +57,13 @@ export default function Settings() {
   const aiProvider = form.ai_provider || 'disabled'
 
   if (loading) return (
-    <div className="p-7 max-w-[1280px]">
+    <div className="px-4 py-5 md:p-7 max-w-[1280px]">
       <TopBar title="Settings" /><Spinner />
     </div>
   )
 
   return (
-    <div className="p-7 max-w-[1280px]">
+    <div className="px-4 py-5 md:p-7 max-w-[1280px]">
       <TopBar title="Settings" />
       <form onSubmit={save} className="flex flex-col gap-4 max-w-[720px]">
 
@@ -79,7 +79,7 @@ export default function Settings() {
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={LABEL_CLS}>Client Secret</label>
-              <input type="password" value={form.strava_client_secret || ''} onChange={e => set('strava_client_secret', e.target.value)} placeholder="••••••••"
+              <input type="password" value={form.strava_client_secret || ''} onChange={e => set('strava_client_secret', e.target.value)} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 className={INPUT_CLS} />
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function Settings() {
         <Card>
           <div className={CARD_TITLE}>Garmin</div>
           {DIVIDER}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className={LABEL_CLS}>Email</label>
               <input type="email" value={form.garmin_email || ''} onChange={e => set('garmin_email', e.target.value)} placeholder="you@email.com"
@@ -105,7 +105,7 @@ export default function Settings() {
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={LABEL_CLS}>Password</label>
-              <input type="password" value={form.garmin_password || ''} onChange={e => set('garmin_password', e.target.value)} placeholder="••••••••"
+              <input type="password" value={form.garmin_password || ''} onChange={e => set('garmin_password', e.target.value)} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 className={INPUT_CLS} />
             </div>
           </div>
@@ -130,7 +130,7 @@ export default function Settings() {
           {aiProvider === 'anthropic' && (
             <div className="flex flex-col gap-1.5 mb-4">
               <label className={LABEL_CLS}>Anthropic API Key</label>
-              <input type="password" value={form.anthropic_api_key || ''} onChange={e => set('anthropic_api_key', e.target.value)} placeholder="sk-ant-••••••••"
+              <input type="password" value={form.anthropic_api_key || ''} onChange={e => set('anthropic_api_key', e.target.value)} placeholder="sk-ant-â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 className={INPUT_CLS} />
             </div>
           )}
@@ -138,7 +138,7 @@ export default function Settings() {
           {aiProvider === 'openai' && (
             <div className="flex flex-col gap-1.5 mb-4">
               <label className={LABEL_CLS}>OpenAI API Key</label>
-              <input type="password" value={form.openai_api_key || ''} onChange={e => set('openai_api_key', e.target.value)} placeholder="sk-••••••••"
+              <input type="password" value={form.openai_api_key || ''} onChange={e => set('openai_api_key', e.target.value)} placeholder="sk-â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 className={INPUT_CLS} />
             </div>
           )}
@@ -162,7 +162,7 @@ export default function Settings() {
         <div className="flex items-center gap-3">
           <Button type="submit" disabled={saving}>
             <Save size={13} />
-            {saving ? 'Saving…' : 'Save Settings'}
+            {saving ? 'Savingâ€¦' : 'Save Settings'}
           </Button>
           {saved && <span className="text-xs text-accent font-semibold">Saved</span>}
         </div>

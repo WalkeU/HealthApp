@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Moon } from 'lucide-react'
 import TopBar from '../components/layout/TopBar.jsx'
 import Spinner from '../components/ui/Spinner.jsx'
@@ -38,15 +38,15 @@ export default function SleepHistory() {
   const selected = records.find(r => r.date === selectedDate) || records[0] || null
 
   return (
-    <div className="p-7 max-w-[1280px]">
+    <div className="px-4 py-5 md:p-7 max-w-[1280px]">
       <TopBar title="Sleep History" />
 
       {loading ? <Spinner /> : !records.length ? (
         <EmptyState icon={Moon} title="No sleep data" description="Sync Garmin to populate sleep history." />
       ) : (
-        <div className="grid grid-cols-[280px,1fr] gap-4 h-[calc(100vh-112px)]">
+        <div className="flex flex-col md:grid md:grid-cols-[280px,1fr] gap-3 md:h-[calc(100vh-112px)]">
           {/* ── Left: date list ── */}
-          <div className="border border-border rounded bg-card flex flex-col overflow-y-auto">
+          <div className="border border-border rounded bg-card flex flex-col overflow-y-auto max-h-64 md:max-h-none">
             {records.map(r => (
               <SleepListItem
                 key={r.date}

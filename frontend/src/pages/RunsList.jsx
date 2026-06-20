@@ -31,7 +31,7 @@ export default function RunsList() {
   const page_runs = (runs || []).slice(0, PAGE_SIZE)
 
   return (
-    <div className="p-7 max-w-[1280px]">
+    <div className="px-4 py-5 md:p-7 max-w-[1280px]">
       <TopBar title="Runs">
         <Button variant="ghost" size="sm" onClick={() => setShowAdd(v => !v)}>
           <Plus size={13} /> Log run
@@ -87,7 +87,7 @@ export default function RunsList() {
           />
         ) : (
           <>
-            <table className="w-full border-collapse">
+            <div className="overflow-x-auto -mx-0"><table className="w-full border-collapse min-w-[500px]">
               <thead>
                 <tr>
                   {['Date','Name','Distance','Duration','Pace','Avg HR','Source'].map(h => (
@@ -101,17 +101,17 @@ export default function RunsList() {
                     className="border-b border-border last:border-b-0 cursor-pointer transition-colors hover:[&>td]:bg-hover">
                     <td className="px-4 py-3 text-[12px] text-ink-2">{formatDate(run.date)}</td>
                     <td className="px-4 py-3 max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap text-[13px]">
-                      {run.name || <span className="text-ink-3">—</span>}
+                      {run.name || <span className="text-ink-3">Ã¢â‚¬â€</span>}
                     </td>
                     <td className="px-4 py-3 text-[13px] text-accent font-semibold">{formatDistance(run.distance_m)}</td>
                     <td className="px-4 py-3 text-[13px]">{formatDuration(run.duration_s)}</td>
                     <td className="px-4 py-3 text-[13px]">{formatPace(run.avg_pace_s)}</td>
-                    <td className="px-4 py-3 text-[13px]">{run.avg_hr ? `${run.avg_hr} bpm` : '—'}</td>
+                    <td className="px-4 py-3 text-[13px]">{run.avg_hr ? `${run.avg_hr} bpm` : 'Ã¢â‚¬â€'}</td>
                     <td className="px-4 py-3 text-[11px] text-ink-3">{run.source}</td>
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
             {hasMore && (
               <div className="px-4 py-3 border-t border-border text-center">
                 <span className="text-xs text-ink-3">Showing {PAGE_SIZE} results</span>
@@ -179,7 +179,7 @@ function AddRunForm({ onClose, onSaved }) {
             className="bg-input border border-border rounded text-ink px-3 py-2 outline-none focus:border-accent transition-colors" />
         </div>
         <div className="flex gap-2 mt-1">
-          <Button type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
+          <Button type="submit" disabled={saving}>{saving ? 'SavingÃ¢â‚¬Â¦' : 'Save'}</Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
         </div>
       </form>

@@ -41,13 +41,13 @@ export default function Dashboard() {
   const today  = s.todayHealth  || {}
 
   return (
-    <div className="p-7 max-w-[1280px]">
+    <div className="px-4 py-5 md:p-7 max-w-[1280px]">
       <TopBar title="Dashboard" />
 
       {loading ? <Spinner /> : (
         <>
-          {/* ── Stat cards ── */}
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3 mb-6">
+          {/* â”€â”€ Stat cards â”€â”€ */}
+          <div className="grid grid-cols-2 md:grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3 mb-5">
             <StatCard
               label="Weekly km"
               value={weekly.total_km ?? '0'}
@@ -56,20 +56,20 @@ export default function Dashboard() {
             />
             <StatCard
               label="Avg Pace"
-              value={s.avgPace?.avg_pace_s ? formatPace(s.avgPace.avg_pace_s).split(' ')[0] : '—'}
+              value={s.avgPace?.avg_pace_s ? formatPace(s.avgPace.avg_pace_s).split(' ')[0] : 'â€”'}
               unit="/km"
               sub="30-day avg"
             />
-            <StatCard label="Resting HR" value={health.resting_hr ? Math.round(health.resting_hr) : '—'} unit="bpm" sub="7-day avg" />
+            <StatCard label="Resting HR" value={health.resting_hr ? Math.round(health.resting_hr) : 'â€”'} unit="bpm" sub="7-day avg" />
             <StatCard
               label="HRV"
-              value={health.hrv ? Math.round(health.hrv) : '—'}
+              value={health.hrv ? Math.round(health.hrv) : 'â€”'}
               unit="ms"
               sub={today.hrv_status ? <HrvStatus status={today.hrv_status} /> : '7-day avg'}
             />
             <StatCard
               label="Sleep"
-              value={health.sleep_duration_s ? `${Math.floor(health.sleep_duration_s / 3600)}h${Math.round((health.sleep_duration_s % 3600) / 60)}m` : '—'}
+              value={health.sleep_duration_s ? `${Math.floor(health.sleep_duration_s / 3600)}h${Math.round((health.sleep_duration_s % 3600) / 60)}m` : 'â€”'}
               sub={health.sleep_score ? `score ${Math.round(health.sleep_score)}` : '7-day avg'}
             />
             {health.spo2_avg != null && (
@@ -77,8 +77,8 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* ── Charts ── */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          {/* â”€â”€ Charts â”€â”€ */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-5">
             <Card>
               <div className={SECTION_TITLE}>Weekly Mileage</div>
               {mileage?.length ? (
@@ -144,12 +144,12 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* ── Today's sleep ── */}
+          {/* â”€â”€ Today's sleep â”€â”€ */}
           {today.date === new Date().toISOString().slice(0, 10) && (
             <SleepCard today={today} onViewAll={() => navigate('/sleep')} />
           )}
 
-          {/* ── Recent runs ── */}
+          {/* â”€â”€ Recent runs â”€â”€ */}
           <Card className="!p-0">
             <div className="px-4 py-3.5 border-b border-border">
               <span className={SECTION_TITLE}>Recent Runs</span>
@@ -176,7 +176,7 @@ export default function Dashboard() {
   )
 }
 
-// ─── Sleep card ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Sleep card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function SleepCard({ today, onViewAll }) {
   const hasAny = today.sleep_duration_s || today.deep_sleep_s || today.rem_sleep_s
@@ -202,7 +202,7 @@ function SleepCard({ today, onViewAll }) {
         <div className="flex items-center justify-between mb-3.5">
           <div>
             <div className="text-[10px] font-semibold tracking-[0.1em] uppercase text-ink-3">
-              Last night — {today.date || ''}
+              Last night â€” {today.date || ''}
             </div>
             <div className="flex gap-3 items-center mt-0.5">
               {today.sleep_duration_s && (
@@ -259,7 +259,7 @@ function SleepCard({ today, onViewAll }) {
   )
 }
 
-// ─── Body Battery card ───────────────────────────────────────────────────────
+// â”€â”€â”€ Body Battery card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function BodyBatteryCard({ today, bbData }) {
   const high    = today.body_battery_high
@@ -328,7 +328,7 @@ function scoreColor(s) {
   return s >= 80 ? '#00ff87' : s >= 60 ? '#ffb340' : '#ff4d6a'
 }
 
-// ─── Table helpers ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Table helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function DataTable({ children }) {
   return (
@@ -351,12 +351,12 @@ function RunRow({ run }) {
     <tr className="border-b border-border last:border-b-0 cursor-pointer transition-colors hover:[&>td]:bg-hover">
       <td className="px-4 py-3 text-[12px] text-ink-2">{formatDate(run.date)}</td>
       <td className="px-4 py-3 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap text-[13px]">
-        {run.name || <span className="text-ink-3">—</span>}
+        {run.name || <span className="text-ink-3">â€”</span>}
       </td>
       <td className="px-4 py-3 text-[13px] text-accent font-semibold">{formatDistance(run.distance_m)}</td>
       <td className="px-4 py-3 text-[13px]">{formatDuration(run.duration_s)}</td>
       <td className="px-4 py-3 text-[13px]">{formatPace(run.avg_pace_s)}</td>
-      <td className="px-4 py-3 text-[13px]">{run.avg_hr ? `${run.avg_hr} bpm` : '—'}</td>
+      <td className="px-4 py-3 text-[13px]">{run.avg_hr ? `${run.avg_hr} bpm` : 'â€”'}</td>
       <td className="px-4 py-3 text-[11px] text-ink-3">{run.source}</td>
     </tr>
   )

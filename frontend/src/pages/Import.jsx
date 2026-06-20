@@ -1,4 +1,4 @@
-﻿import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Upload, RefreshCw, Link, Download } from 'lucide-react'
 import TopBar from '../components/layout/TopBar.jsx'
 import Card from '../components/ui/Card.jsx'
@@ -18,7 +18,7 @@ export default function Import() {
   const { data: config } = useConfig()
 
   return (
-    <div className="p-7 max-w-[1280px]">
+    <div className="px-4 py-5 md:p-7 max-w-[1280px]">
       <TopBar title="Import Data" />
       <div className="flex flex-col gap-4 max-w-[720px]">
         <AppleHealthSection />
@@ -53,7 +53,7 @@ function ResultBanner({ result }) {
     ].join(' ')}>
       {result.message || (ok
         ? `Done. Imported ${result.activitiesImported ?? result.imported ?? 0} activities, ${result.healthImported ?? 0} health records.`
-        : 'Sync failed "” check credentials.')}
+        : 'Sync failed "â€ check credentials.')}
     </div>
   )
 }
@@ -86,7 +86,7 @@ function AppleHealthSection() {
 
   return (
     <Card>
-      <SectionHeader icon={Download} title="Apple Health" sub="Export export.xml from iPhone → Health → Profile → Export All Health Data" />
+      <SectionHeader icon={Download} title="Apple Health" sub="Export export.xml from iPhone â†’ Health â†’ Profile â†’ Export All Health Data" />
       <div className="h-px bg-border my-5" />
       <div
         className={[
@@ -109,7 +109,7 @@ function AppleHealthSection() {
       {file && (
         <div className="mt-3">
           <Button onClick={doImport} disabled={loading}>
-            {loading ? <><Spinner size={14} />Parsing…</> : 'Import'}
+            {loading ? <><Spinner size={14} />Parsingâ€¦</> : 'Import'}
           </Button>
         </div>
       )}
@@ -141,7 +141,7 @@ function StravaSection({ config }) {
       <SectionHeader
         icon={RefreshCw}
         title="Strava"
-        sub={connected ? `Connected · last sync: ${config.strava_last_sync?.slice(0, 10) || 'never'}` : 'Not connected'}
+        sub={connected ? `Connected Â· last sync: ${config.strava_last_sync?.slice(0, 10) || 'never'}` : 'Not connected'}
       />
       <div className="h-px bg-border my-5" />
       <div className="flex gap-2">
@@ -153,7 +153,7 @@ function StravaSection({ config }) {
           <>
             <Button onClick={sync} disabled={loading}>
               <RefreshCw size={13} className={loading ? 'animate-spin-slow' : ''} />
-              {loading ? 'Syncing…' : 'Sync Activities'}
+              {loading ? 'Syncingâ€¦' : 'Sync Activities'}
             </Button>
             <Button variant="ghost" onClick={() => window.location.href = '/api/sync/strava/auth'}>
               Reconnect
@@ -203,7 +203,7 @@ function GarminSection({ config }) {
         icon={RefreshCw}
         title="Garmin"
         sub={hasCredentials
-          ? `${config.garmin_email} · last sync: ${lastSync ? lastSync.slice(0, 16).replace('T', ' ') : 'never'}`
+          ? `${config.garmin_email} Â· last sync: ${lastSync ? lastSync.slice(0, 16).replace('T', ' ') : 'never'}`
           : 'Enter credentials to sync'}
       />
       <div className="h-px bg-border my-5" />
@@ -223,7 +223,7 @@ function GarminSection({ config }) {
           <label className={LABEL_CLS}>Password</label>
           <input
             type="password"
-            placeholder="••••••••"
+            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
             value={form.garmin_password}
             onChange={e => setForm(f => ({ ...f, garmin_password: e.target.value }))}
             className={INPUT_CLS}
@@ -236,7 +236,7 @@ function GarminSection({ config }) {
         disabled={loading || (!form.garmin_email && !hasCredentials)}
       >
         <RefreshCw size={13} className={loading ? 'animate-spin-slow' : ''} />
-        {loading ? 'Syncing…' : 'Sync Garmin'}
+        {loading ? 'Syncingâ€¦' : 'Sync Garmin'}
       </Button>
 
       {result && (
@@ -244,8 +244,8 @@ function GarminSection({ config }) {
           <div className="px-3 py-2 bg-surface border-b border-border text-xs font-semibold">
             <span className={result.ok ? 'text-accent' : 'text-danger'}>
               {result.ok
-                ? `✓ Done "" ${result.activitiesImported} activities, ${result.healthImported} health days`
-                : `✗ ${result.message}`}
+                ? `âœ“ Done "" ${result.activitiesImported} activities, ${result.healthImported} health days`
+                : `âœ— ${result.message}`}
             </span>
           </div>
           {result.log?.length > 0 && (

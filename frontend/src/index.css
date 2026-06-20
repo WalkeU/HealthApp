@@ -52,15 +52,27 @@
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Prevent font size adjustment on iOS orientation change */
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     font-variant-numeric: tabular-nums;
+    /* Smooth momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
   }
 
   input, select, textarea {
     font-variant-numeric: tabular-nums;
     width: 100%;
+    /* Prevent zoom on focus on iOS (font-size must be ≥16px) */
+    font-size: max(16px, 1em);
+  }
+
+  @media (min-width: 768px) {
+    input, select, textarea {
+      font-size: 14px;
+    }
   }
 
   input::placeholder,
@@ -72,7 +84,17 @@
     background: var(--color-card);
   }
 
+  /* Tap highlight removal on mobile */
+  a, button { -webkit-tap-highlight-color: transparent; }
+
   ::-webkit-scrollbar        { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track  { background: transparent; }
   ::-webkit-scrollbar-thumb  { background: var(--color-border-strong); border-radius: 2px; }
+}
+
+@layer utilities {
+  /* iOS safe area support */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }

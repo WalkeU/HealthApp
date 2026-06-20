@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Plus, Trash2, BookOpen } from 'lucide-react'
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
@@ -87,16 +87,16 @@ export default function Notes() {
   }
 
   return (
-    <div className="p-7 max-w-[1280px]">
+    <div className="px-4 py-5 md:p-7 max-w-[1280px]">
       <TopBar title="Journal">
         <Button size="sm" onClick={openNew}>
           <Plus size={13} /> New note
         </Button>
       </TopBar>
 
-      <div className="grid grid-cols-[280px,1fr] gap-4 h-[calc(100vh-112px)]">
+      <div className="flex flex-col md:grid md:grid-cols-[280px,1fr] gap-3 md:h-[calc(100vh-112px)]">
         {/* List */}
-        <div className="border border-border rounded bg-card flex flex-col overflow-y-auto">
+        <div className="border border-border rounded bg-card flex flex-col overflow-y-auto max-h-64 md:max-h-none">
           {loading ? <Spinner /> : !notes?.length && !isNew ? (
             <EmptyState icon={BookOpen} title="No notes yet" description="Write your first journal entry." />
           ) : (

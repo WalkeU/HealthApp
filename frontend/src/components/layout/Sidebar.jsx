@@ -1,63 +1,84 @@
-﻿import { NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Activity, Moon, BookOpen,
   Zap, Download, Settings, Bot, Heart,
 } from 'lucide-react'
 
 const NAV = [
-  { to: '/',         icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/runs',     icon: Activity,        label: 'Runs' },
-  { to: '/sleep',    icon: Moon,            label: 'Sleep' },
-  { to: '/notes',    icon: BookOpen,        label: 'Journal' },
-  { to: '/pain-log', icon: Zap,             label: 'Pain Log' },
-  { to: '/import',   icon: Download,        label: 'Import' },
-  { to: '/insights', icon: Bot,             label: 'Insights' },
-  { to: '/settings', icon: Settings,        label: 'Settings' },
+  { to: '/',         icon: LayoutDashboard, label: 'Dashboard', short: 'Home'     },
+  { to: '/runs',     icon: Activity,        label: 'Runs',      short: 'Runs'     },
+  { to: '/sleep',    icon: Moon,            label: 'Sleep',     short: 'Sleep'    },
+  { to: '/notes',    icon: BookOpen,        label: 'Journal',   short: 'Journal'  },
+  { to: '/pain-log', icon: Zap,             label: 'Pain Log',  short: 'Pain'     },
+  { to: '/import',   icon: Download,        label: 'Import',    short: 'Import'   },
+  { to: '/insights', icon: Bot,             label: 'Insights',  short: 'AI'       },
+  { to: '/settings', icon: Settings,        label: 'Settings',  short: 'More'     },
 ]
 
 export default function Sidebar() {
   return (
-    <nav className="
-      fixed bottom-0 left-0 right-0 top-auto w-full h-[60px] flex-row border-t border-border bg-card z-50
-      md:top-0 md:left-0 md:bottom-0 md:right-auto md:w-sidebar md:h-auto md:flex-col md:border-r md:border-t-0
-      flex
-    ">
-      {/* Logo "” hidden on mobile */}
-      <div className="hidden md:flex items-center gap-2 px-4 pt-5 pb-4 border-b border-border">
-        <Heart size={14} className="text-accent fill-accent" />
-        <span className="text-[11px] font-extrabold tracking-[0.18em] text-ink">HEALTH</span>
-      </div>
+    <>
+      {/* ── Desktop sidebar ── */}
+      <nav className="hidden md:flex fixed top-0 left-0 bottom-0 w-sidebar bg-card border-r border-border flex-col z-50">
+        <div className="flex items-center gap-2 px-4 py-5 border-b border-border shrink-0">
+          <Heart size={14} className="text-accent fill-accent" />
+          <span className="text-[11px] font-extrabold tracking-[0.18em] text-ink">HEALTH</span>
+        </div>
+        <div className="flex flex-col py-2 flex-1 overflow-y-auto">
+          {NAV.map(({ to, icon: Icon, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              className={({ isActive }) => [
+                'relative flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium transition-colors',
+                isActive ? 'bg-accent/8 text-ink' : 'text-ink-2 hover:bg-hover hover:text-ink',
+              ].join(' ')}
+            >
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-accent rounded-r-sm" />
+                  )}
+                  <Icon size={15} className={isActive ? 'text-accent shrink-0' : 'text-ink-3 shrink-0'} />
+                  <span>{label}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
 
-      {/* Nav links */}
-      <div className="flex md:flex-col flex-row w-full md:w-auto flex-1 overflow-y-auto py-0 md:py-2 justify-around md:justify-start">
-        {NAV.map(({ to, icon: Icon, label }) => (
+      {/* ── Mobile bottom tab bar ── */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border flex items-stretch">
+        {NAV.map(({ to, icon: Icon, short }) => (
           <NavLink
             key={to}
             to={to}
             end={to === '/'}
-            className={({ isActive }) =>
-              [
-                'relative flex items-center gap-[10px] px-4 py-[9px] transition-colors duration-100 text-[12px] font-medium',
-                'md:flex-row flex-col md:gap-[10px] gap-[2px] md:py-[9px] py-2 md:px-4 px-3 md:text-[12px] text-[9px]',
-                isActive ? 'bg-accent/8' : 'hover:bg-hover',
-              ].join(' ')
-            }
+            className="flex-1 flex flex-col items-center justify-center gap-[3px] pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] min-h-[52px] transition-colors active:bg-hover"
           >
             {({ isActive }) => (
               <>
-                {isActive && (
-                  <span className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-accent rounded-r-[1px]" />
-                )}
-                <Icon size={15} className={isActive ? 'text-accent shrink-0' : 'text-ink-3 shrink-0'} />
-                <span className={isActive ? 'text-ink' : 'text-ink-2'}>
-                  {label}
-                </span>
+                <div className={[
+                  'relative flex items-center justify-center w-8 h-6 rounded-lg transition-colors',
+                  isActive ? 'bg-accent/10' : '',
+                ].join(' ')}>
+                  <Icon
+                    size={17}
+                    strokeWidth={isActive ? 2.5 : 1.75}
+                    className={isActive ? 'text-accent' : 'text-ink-3'}
+                  />
+                </div>
+                <span className={[
+                  'text-[9.5px] font-semibold tracking-wide leading-none',
+                  isActive ? 'text-accent' : 'text-ink-3',
+                ].join(' ')}>{short}</span>
               </>
             )}
           </NavLink>
         ))}
-      </div>
-    </nav>
+      </nav>
+    </>
   )
 }
-
