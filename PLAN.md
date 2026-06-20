@@ -138,24 +138,56 @@ POST /api/config              — save config
 
 ### Two environments
 
+### `.env` / `.env.example`
+
+All ports and secrets live in a single `.env` file at the project root.  
+Commit `.env.example`, **never** commit `.env`.
+
+```ini
+# --- App ---
+NODE_ENV=development
+
+# --- Ports ---
+BACKEND_PORT=3001
+FRONTEND_PORT=5173
+FRONTEND_PROD_PORT=80
+
+# --- Database ---
+SQLITE_PATH=/data/healthapp.db
+
+# --- Strava ---
+STRAVA_CLIENT_ID=
+STRAVA_CLIENT_SECRET=
+STRAVA_REDIRECT_URI=http://localhost:3001/api/sync/strava/callback
+
+# --- Garmin ---
+GARMIN_EMAIL=
+GARMIN_PASSWORD=
+
+# --- AI (Phase 2) ---
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+OLLAMA_BASE_URL=http://mac-mini.local:11434
+```
+
 #### Development (`docker-compose.dev.yml`)
 
 ```yaml
 services:
   backend:
     build: ./backend
+    env_file: .env
     volumes:
       - ./backend:/app # hot-reload via nodemon
       - ./data:/data # SQLite file persisted
-    ports: ["3001:3001"]
-    environment:
-      - NODE_ENV=development
+    ports: ["${BACKEND_PORT}:${BACKEND_PORT}"]
 
   frontend:
     build: ./frontend
+    env_file: .env
     volumes:
       - ./frontend:/app # Vite HMR
-    ports: ["5173:5173"]
+    ports: ["${FRONTEND_PORT}:${FRONTEND_PORT}"]
 ```
 
 #### Production (`docker-compose.prod.yml`)
@@ -164,16 +196,16 @@ services:
 services:
   backend:
     build: ./backend
+    env_file: .env
     volumes:
       - healthapp_data:/data # named volume, persisted
-    ports: ["3001:3001"]
-    environment:
-      - NODE_ENV=production
+    ports: ["${BACKEND_PORT}:${BACKEND_PORT}"]
     restart: unless-stopped
 
   frontend:
     build: ./frontend # Nginx serving built static files
-    ports: ["80:80"]
+    env_file: .env
+    ports: ["${FRONTEND_PROD_PORT}:80"]
     restart: unless-stopped
 
 volumes:
@@ -199,8 +231,10 @@ HealthApp/
 ├── data/                   # SQLite db file (gitignored)
 ├── docker-compose.dev.yml
 ├── docker-compose.prod.yml
+├── .env                    # local secrets — gitignored
+├── .env.example            # committed template
 ├── PLAN.md
-└── .env.example
+└── .gitignore              # includes .env and data/
 ```
 
 ---

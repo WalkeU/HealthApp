@@ -1,0 +1,40 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    env_file: .env
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./data:/data
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    environment:
+      - NODE_ENV=development
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    env_file: .env
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - NODE_ENV=development
+      - API_URL=http://backend:${BACKEND_PORT}
+    depends_on:
+      - backend
+
+  # SQLite DB browser — http://localhost:${SQLITE_WEB_PORT}
+  sqlite-web:
+    image: coleifer/sqlite-web
+    env_file: .env
+    volumes:
+      - ./data:/data
+    ports:
+      - "${SQLITE_WEB_PORT}:${SQLITE_WEB_PORT}"
+    command: ["sqlite_web", "-H", "0.0.0.0", "-p", "${SQLITE_WEB_PORT}", "/data/healthapp.db"]

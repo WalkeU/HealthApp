@@ -1,0 +1,28 @@
+# Environment
+.env
+
+# Data (SQLite file — persisted but not committed)
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build output
+frontend/dist/
+frontend/.vite/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
