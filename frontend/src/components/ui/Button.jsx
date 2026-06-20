@@ -1,42 +1,35 @@
-export default function Button({ children, variant = 'primary', size = 'md', onClick, disabled, type = 'button', style }) {
-  const base = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 6,
-    border: 'none',
-    borderRadius: 'var(--radius)',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    fontFamily: 'inherit',
-    fontWeight: 600,
-    letterSpacing: '0.04em',
-    transition: 'all 0.12s',
-    opacity: disabled ? 0.45 : 1,
-    whiteSpace: 'nowrap',
-    ...(size === 'sm' ? { fontSize: 11, padding: '5px 10px' }
-      : size === 'lg' ? { fontSize: 14, padding: '11px 22px' }
-      : { fontSize: 12, padding: '8px 14px' }),
-    ...(variant === 'primary' ? {
-      background: 'var(--accent)',
-      color: '#0d0d0f',
-    } : variant === 'ghost' ? {
-      background: 'transparent',
-      color: 'var(--text-2)',
-      border: '1px solid var(--border)',
-    } : variant === 'danger' ? {
-      background: 'var(--danger-10)',
-      color: 'var(--danger)',
-      border: '1px solid var(--danger)',
-    } : variant === 'subtle' ? {
-      background: 'var(--bg-hover)',
-      color: 'var(--text)',
-      border: '1px solid var(--border)',
-    } : {}),
-    ...style,
-  }
+﻿export default function Button({ children, variant = 'primary', size = 'md', onClick, disabled, type = 'button', className = '' }) {
+  const sizeClass = size === 'sm'
+    ? 'text-[11px] px-2.5 py-[5px]'
+    : size === 'lg'
+    ? 'text-sm px-[22px] py-[11px]'
+    : 'text-xs px-3.5 py-2'
+
+  const variantClass = variant === 'primary'
+    ? 'bg-accent text-surface border-0'
+    : variant === 'ghost'
+    ? 'bg-transparent text-ink-2 border border-border'
+    : variant === 'danger'
+    ? 'bg-danger/8 text-danger border border-danger'
+    : variant === 'subtle'
+    ? 'bg-hover text-ink border border-border'
+    : ''
 
   return (
-    <button type={type} style={base} onClick={onClick} disabled={disabled}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={[
+        'inline-flex items-center gap-1.5 rounded font-semibold tracking-[0.04em] transition-all duration-[120ms] whitespace-nowrap cursor-pointer',
+        sizeClass,
+        variantClass,
+        disabled ? 'opacity-[0.45] cursor-not-allowed' : '',
+        className,
+      ].join(' ')}
+    >
       {children}
     </button>
   )
 }
+

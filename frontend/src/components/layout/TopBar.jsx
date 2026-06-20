@@ -1,23 +1,8 @@
 export default function TopBar({ title, children }) {
   return (
-    <div style={styles.bar}>
-      <span className="page-title">{title}</span>
-      {children && <div style={styles.actions}>{children}</div>}
+    <div className="flex items-center justify-between mb-6 gap-4">
+      <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-ink-2">{title}</span>
+      {children && <div className="flex items-center gap-2">{children}</div>}
     </div>
   )
-}
-
-const styles = {
-  bar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-    gap: 16,
-  },
-  actions: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-  },
 }

@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Activity } from 'lucide-react'
 import TopBar from '../components/layout/TopBar.jsx'
-import Card from '../components/ui/Card.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import Button from '../components/ui/Button.jsx'
 import Spinner from '../components/ui/Spinner.jsx'
@@ -14,13 +13,14 @@ function useActivity(id) {
   return useFetch(() => api.getActivity(id), [id])
 }
 
-const fmtTime = (s) => s != null ? formatDuration(s) : null
-const fmtMs   = (ms) => ms != null ? `${Math.round(ms)} ms` : null
-const fmtCm   = (cm) => cm != null ? `${cm.toFixed(1)} cm` : null
-const fmtPct  = (v)  => v  != null ? `${v}%` : null
-const fmtWatt = (w)  => w  != null ? `${Math.round(w)} W` : null
-const fmtCad  = (c)  => c  != null ? `${c} spm` : null
-const fmtSpeed = (ms) => ms != null ? `${(ms * 3.6).toFixed(1)} km/h` : null
+const fmtTime  = (s)  => s  != null ? formatDuration(s)               : null
+const fmtMs    = (ms) => ms != null ? `${Math.round(ms)} ms`          : null
+const fmtCm    = (cm) => cm != null ? `${cm.toFixed(1)} cm`           : null
+const fmtWatt  = (w)  => w  != null ? `${Math.round(w)} W`           : null
+const fmtCad   = (c)  => c  != null ? `${c} spm`                     : null
+const fmtSpeed = (ms) => ms != null ? `${(ms * 3.6).toFixed(1)} km/h`: null
+
+const SECTION_TITLE = 'text-[10px] font-bold tracking-[0.12em] uppercase text-ink-3 mb-2.5'
 
 export default function RunDetail() {
   const { id } = useParams()
@@ -28,7 +28,7 @@ export default function RunDetail() {
   const { data: run, loading, error } = useActivity(id)
 
   return (
-    <div className="page">
+    <div className="p-7 max-w-[1280px]">
       <TopBar title="Run Detail">
         <Button variant="ghost" size="sm" onClick={() => navigate(-1)}>
           <ArrowLeft size={13} /> Back
@@ -42,23 +42,24 @@ export default function RunDetail() {
       ) : (
         <>
           {/* Hero */}
-          <div style={styles.hero}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+          <div className="mb-6 pb-5 border-b border-border">
+            <div className="flex items-start justify-between gap-4">
               <div>
-                <div style={styles.heroDate}>{formatDate(run.date)}</div>
-                <div style={styles.heroName}>{run.name || 'Run'}</div>
-                {run.location_name && <div style={styles.heroLoc}>{run.location_name}</div>}
+                <div className="text-[11px] text-ink-3 tracking-[0.08em] uppercase mb-1">{formatDate(run.date)}</div>
+                <div className="text-[18px] font-bold tracking-[-0.02em] mb-1">{run.name || 'Run'}</div>
+                {run.location_name && <div className="text-xs text-ink-2 mb-2.5">{run.location_name}</div>}
               </div>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <div className="flex gap-1.5 flex-wrap justify-end">
                 {run.is_pr ? <Badge color="accent">PR</Badge> : null}
                 {run.training_effect_label && <Badge>{run.training_effect_label}</Badge>}
                 <Badge>{run.source}</Badge>
               </div>
             </div>
-            <div style={styles.heroDistance}>{formatDistance(run.distance_m)}</div>
+            <div className="text-[52px] font-extrabold text-accent tracking-[-0.04em] leading-none mt-3">
+              {formatDistance(run.distance_m)}
+            </div>
           </div>
 
-          {/* Primary stats */}
           <StatSection title="Primary">
             <Stat label="Duration"       value={fmtTime(run.duration_s)} />
             <Stat label="Moving Time"    value={fmtTime(run.moving_duration_s)} />
@@ -70,7 +71,6 @@ export default function RunDetail() {
             <Stat label="Steps"          value={run.steps?.toLocaleString()} />
           </StatSection>
 
-          {/* Heart rate */}
           <StatSection title="Heart Rate">
             <Stat label="Avg HR"   value={run.avg_hr ? `${run.avg_hr} bpm` : null} />
             <Stat label="Max HR"   value={run.max_hr ? `${run.max_hr} bpm` : null} />
@@ -81,44 +81,39 @@ export default function RunDetail() {
             <Stat label="Zone 5"   value={fmtTime(run.hr_zone5_s)} sub=">90%" />
           </StatSection>
 
-          {/* HR Zone bar */}
           {(run.hr_zone1_s || run.hr_zone2_s || run.hr_zone3_s || run.hr_zone4_s || run.hr_zone5_s) && (
             <HrZoneBar run={run} />
           )}
 
-          {/* Elevation */}
           <StatSection title="Elevation">
-            <Stat label="Gain"  value={run.elevation_m      != null ? `${Math.round(run.elevation_m)} m`      : null} />
-            <Stat label="Loss"  value={run.elevation_loss_m != null ? `${Math.round(run.elevation_loss_m)} m` : null} />
+            <Stat label="Gain" value={run.elevation_m      != null ? `${Math.round(run.elevation_m)} m`      : null} />
+            <Stat label="Loss" value={run.elevation_loss_m != null ? `${Math.round(run.elevation_loss_m)} m` : null} />
           </StatSection>
 
-          {/* Running dynamics */}
           {(run.avg_cadence || run.avg_stride_length_m || run.avg_vertical_oscillation) && (
             <StatSection title="Running Dynamics">
-              <Stat label="Avg Cadence"    value={fmtCad(run.avg_cadence)} />
-              <Stat label="Max Cadence"    value={fmtCad(run.max_cadence)} />
-              <Stat label="Stride Length"  value={run.avg_stride_length_m ? `${run.avg_stride_length_m.toFixed(2)} m` : null} />
-              <Stat label="Vert. Osc."     value={fmtCm(run.avg_vertical_oscillation)} />
-              <Stat label="GCT"            value={fmtMs(run.avg_ground_contact_time)} />
-              <Stat label="Vert. Ratio"    value={run.avg_vertical_ratio ? `${run.avg_vertical_ratio.toFixed(1)}%` : null} />
+              <Stat label="Avg Cadence"   value={fmtCad(run.avg_cadence)} />
+              <Stat label="Max Cadence"   value={fmtCad(run.max_cadence)} />
+              <Stat label="Stride Length" value={run.avg_stride_length_m ? `${run.avg_stride_length_m.toFixed(2)} m` : null} />
+              <Stat label="Vert. Osc."    value={fmtCm(run.avg_vertical_oscillation)} />
+              <Stat label="GCT"           value={fmtMs(run.avg_ground_contact_time)} />
+              <Stat label="Vert. Ratio"   value={run.avg_vertical_ratio ? `${run.avg_vertical_ratio.toFixed(1)}%` : null} />
             </StatSection>
           )}
 
-          {/* Power */}
           {(run.avg_power || run.norm_power) && (
             <StatSection title="Power">
-              <Stat label="Avg Power"  value={fmtWatt(run.avg_power)} />
-              <Stat label="Max Power"  value={fmtWatt(run.max_power)} />
-              <Stat label="NP"         value={fmtWatt(run.norm_power)} />
+              <Stat label="Avg Power" value={fmtWatt(run.avg_power)} />
+              <Stat label="Max Power" value={fmtWatt(run.max_power)} />
+              <Stat label="NP"        value={fmtWatt(run.norm_power)} />
             </StatSection>
           )}
 
-          {/* Training load */}
           {(run.aerobic_te || run.vo2max) && (
             <StatSection title="Training Load">
-              <Stat label="Aerobic TE"    value={run.aerobic_te   ? run.aerobic_te.toFixed(1)   : null} />
-              <Stat label="Anaerobic TE"  value={run.anaerobic_te ? run.anaerobic_te.toFixed(1) : null} />
-              <Stat label="VO2 Max"       value={run.vo2max       ? run.vo2max.toFixed(1)        : null} />
+              <Stat label="Aerobic TE"   value={run.aerobic_te   ? run.aerobic_te.toFixed(1)   : null} />
+              <Stat label="Anaerobic TE" value={run.anaerobic_te ? run.anaerobic_te.toFixed(1) : null} />
+              <Stat label="VO2 Max"      value={run.vo2max       ? run.vo2max.toFixed(1)        : null} />
             </StatSection>
           )}
         </>
@@ -133,9 +128,11 @@ function StatSection({ title, children }) {
   if (!visible.length) return null
 
   return (
-    <div style={{ marginBottom: 20 }}>
-      <div style={styles.sectionTitle}>{title}</div>
-      <div style={styles.statGrid}>{visible}</div>
+    <div className="mb-5">
+      <div className={SECTION_TITLE}>{title}</div>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-2">
+        {visible}
+      </div>
     </div>
   )
 }
@@ -143,9 +140,13 @@ function StatSection({ title, children }) {
 function Stat({ label, value, sub, accent }) {
   if (value == null) return null
   return (
-    <div style={styles.stat}>
-      <div style={styles.statLabel}>{label}{sub && <span style={styles.statSub}> {sub}</span>}</div>
-      <div style={{ ...styles.statValue, ...(accent ? { color: 'var(--accent)' } : {}) }}>{value}</div>
+    <div className="bg-card border border-border rounded px-3.5 py-3">
+      <div className="text-[10px] font-semibold tracking-[0.08em] uppercase text-ink-3 mb-1">
+        {label}{sub && <span className="text-[9px] font-normal"> {sub}</span>}
+      </div>
+      <div className={`text-[16px] font-semibold tracking-[-0.01em] ${accent ? 'text-accent' : 'text-ink'}`}>
+        {value}
+      </div>
     </div>
   )
 }
@@ -158,50 +159,25 @@ function HrZoneBar({ run }) {
   if (!total) return null
 
   return (
-    <div style={{ marginBottom: 20 }}>
-      <div style={styles.sectionTitle}>HR Zone Distribution</div>
-      <div style={{ display: 'flex', height: 20, borderRadius: 2, overflow: 'hidden', gap: 1 }}>
+    <div className="mb-5">
+      <div className={SECTION_TITLE}>HR Zone Distribution</div>
+      <div className="flex h-5 rounded-sm overflow-hidden gap-px">
         {zones.map((z, i) => z > 0 && (
-          <div key={i} title={`Z${i+1}: ${Math.round(z/60)}m (${Math.round(z/total*100)}%)`}
-            style={{ flex: z, background: ZONE_COLORS[i], transition: 'flex 0.3s' }} />
+          <div key={i}
+            title={`Z${i+1}: ${Math.round(z/60)}m (${Math.round(z/total*100)}%)`}
+            className="transition-[flex] duration-300"
+            style={{ flex: z, background: ZONE_COLORS[i] }}
+          />
         ))}
       </div>
-      <div style={{ display: 'flex', gap: 12, marginTop: 6 }}>
+      <div className="flex gap-3 mt-1.5">
         {zones.map((z, i) => z > 0 && (
-          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: 'var(--text-3)' }}>
-            <div style={{ width: 8, height: 8, borderRadius: 1, background: ZONE_COLORS[i] }} />
+          <div key={i} className="flex items-center gap-1 text-[10px] text-ink-3">
+            <div className="w-2 h-2 rounded-sm" style={{ background: ZONE_COLORS[i] }} />
             Z{i+1} {Math.round(z/total*100)}%
           </div>
         ))}
       </div>
     </div>
   )
-}
-
-const styles = {
-  hero: {
-    marginBottom: 24,
-    paddingBottom: 20,
-    borderBottom: '1px solid var(--border)',
-  },
-  heroDate: { fontSize: 11, color: 'var(--text-3)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 4 },
-  heroName: { fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 4 },
-  heroLoc:  { fontSize: 12, color: 'var(--text-2)', marginBottom: 10 },
-  heroDistance: { fontSize: 52, fontWeight: 800, color: 'var(--accent)', letterSpacing: '-0.04em', lineHeight: 1, marginTop: 12 },
-  sectionTitle: {
-    fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
-    color: 'var(--text-3)', marginBottom: 10,
-  },
-  statGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-    gap: 8,
-  },
-  stat: {
-    background: 'var(--bg-card)', border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)', padding: '12px 14px',
-  },
-  statLabel: { fontSize: 10, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 4 },
-  statSub:   { fontSize: 9, color: 'var(--text-3)', fontWeight: 400 },
-  statValue: { fontSize: 16, fontWeight: 600, letterSpacing: '-0.01em' },
 }

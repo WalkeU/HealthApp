@@ -12,9 +12,9 @@ import SleepHistory from './pages/SleepHistory.jsx'
 
 export default function App() {
   return (
-    <div className="app-layout">
+    <div className="flex min-h-screen bg-surface text-ink font-mono">
       <Sidebar />
-      <main className="main-content">
+      <main className="flex-1 md:ml-sidebar min-h-screen overflow-x-hidden pb-16 md:pb-0">
         <Routes>
           <Route path="/"          element={<Dashboard />} />
           <Route path="/runs"      element={<RunsList />} />

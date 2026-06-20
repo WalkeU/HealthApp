@@ -2,74 +2,23 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 
 export default function StatCard({ label, value, unit, trend, sub }) {
   const TrendIcon = trend > 0 ? TrendingUp : trend < 0 ? TrendingDown : Minus
-  const trendColor = trend > 0 ? 'var(--accent)' : trend < 0 ? 'var(--danger)' : 'var(--text-3)'
+  const trendClass = trend > 0 ? 'text-accent' : trend < 0 ? 'text-danger' : 'text-ink-3'
 
   return (
-    <div style={styles.card}>
-      <div style={styles.label}>{label}</div>
-      <div style={styles.valueRow}>
-        <span style={styles.value}>{value ?? '—'}</span>
-        {unit && <span style={styles.unit}>{unit}</span>}
+    <div className="bg-card border border-border rounded px-[18px] py-4 flex flex-col gap-1">
+      <div className="text-[10px] font-semibold tracking-[0.1em] uppercase text-ink-3 mb-1">{label}</div>
+      <div className="flex items-baseline gap-1">
+        <span className="text-[28px] font-bold text-ink leading-none tracking-[-0.02em]">{value ?? '—'}</span>
+        {unit && <span className="text-[11px] text-ink-2 font-medium">{unit}</span>}
       </div>
-      <div style={styles.meta}>
+      <div className="flex items-center gap-1.5 mt-1">
         {trend != null && (
-          <span style={{ ...styles.trend, color: trendColor }}>
+          <span className={`flex items-center ${trendClass}`}>
             <TrendIcon size={11} />
           </span>
         )}
-        {sub && <span style={styles.sub}>{sub}</span>}
+        {sub && <span className="text-[11px] text-ink-3">{sub}</span>}
       </div>
     </div>
   )
-}
-
-const styles = {
-  card: {
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
-    padding: '16px 18px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 4,
-  },
-  label: {
-    fontSize: 10,
-    fontWeight: 600,
-    letterSpacing: '0.1em',
-    textTransform: 'uppercase',
-    color: 'var(--text-3)',
-    marginBottom: 4,
-  },
-  valueRow: {
-    display: 'flex',
-    alignItems: 'baseline',
-    gap: 4,
-  },
-  value: {
-    fontSize: 28,
-    fontWeight: 700,
-    color: 'var(--text)',
-    lineHeight: 1,
-    letterSpacing: '-0.02em',
-  },
-  unit: {
-    fontSize: 11,
-    color: 'var(--text-2)',
-    fontWeight: 500,
-  },
-  meta: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
-  },
-  trend: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  sub: {
-    fontSize: 11,
-    color: 'var(--text-3)',
-  },
 }

@@ -1,28 +1,16 @@
-export default function Badge({ children, color = 'default' }) {
-  const colors = {
-    default: { background: 'var(--bg-hover)', color: 'var(--text-2)', border: 'var(--border)' },
-    accent:  { background: 'var(--accent-10)', color: 'var(--accent)', border: 'var(--accent-20)' },
-    danger:  { background: 'var(--danger-10)', color: 'var(--danger)', border: 'rgba(255,77,106,0.2)' },
-    warning: { background: 'var(--warning-10)', color: 'var(--warning)', border: 'rgba(255,179,64,0.2)' },
-  }
-  const c = colors[color] || colors.default
+﻿export default function Badge({ children, color = 'default' }) {
+  const colorClass = color === 'accent'
+    ? 'bg-accent/8 text-accent border-accent/18'
+    : color === 'danger'
+    ? 'bg-danger/8 text-danger border-danger/20'
+    : color === 'warning'
+    ? 'bg-warn/10 text-warn border-warn/20'
+    : 'bg-hover text-ink-2 border-border'
 
   return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      fontSize: 10,
-      fontWeight: 600,
-      letterSpacing: '0.06em',
-      textTransform: 'uppercase',
-      padding: '2px 7px',
-      borderRadius: 2,
-      border: `1px solid ${c.border}`,
-      background: c.background,
-      color: c.color,
-      whiteSpace: 'nowrap',
-    }}>
+    <span className={`inline-flex items-center text-[10px] font-semibold tracking-[0.06em] uppercase px-[7px] py-[2px] rounded-sm border whitespace-nowrap ${colorClass}`}>
       {children}
     </span>
   )
 }
+

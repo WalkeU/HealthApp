@@ -1,15 +1,7 @@
-export default function Card({ children, style, padding = '20px' }) {
+export default function Card({ children, className = '', style }) {
   return (
-    <div style={{ ...styles.card, padding, ...style }}>
+    <div className={`bg-card border border-border rounded p-5 ${className}`} style={style}>
       {children}
     </div>
   )
-}
-
-const styles = {
-  card: {
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)',
-  },
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Zap } from 'lucide-react'
 import TopBar from '../components/layout/TopBar.jsx'
 import Button from '../components/ui/Button.jsx'
@@ -16,6 +16,10 @@ const SEVERITY_LABEL = ['', 'Minimal', 'Mild', 'Moderate', 'Severe', 'Extreme']
 function usePainLog() {
   return useFetch(() => api.getPainLog({ limit: 100 }), [])
 }
+
+const LABEL_CLS = 'text-[10px] font-semibold tracking-[0.1em] uppercase text-ink-2'
+const INPUT_CLS = 'bg-input border border-border rounded text-ink px-3 py-2 outline-none focus:border-accent transition-colors'
+const SECTION_LABEL = 'text-[10px] text-ink-3 uppercase tracking-[0.1em] mb-2'
 
 export default function PainLog() {
   const { data: entries, loading, refetch } = usePainLog()
@@ -45,28 +49,37 @@ export default function PainLog() {
   }
 
   return (
-    <div className="page">
+    <div className="p-7 max-w-[1280px]">
       <TopBar title="Pain Log" />
 
-      <div className="split-layout">
+      <div className="grid grid-cols-[280px,1fr] gap-4 h-[calc(100vh-112px)]">
         {/* List */}
-        <div className="split-list">
+        <div className="border border-border rounded bg-card flex flex-col overflow-y-auto">
           {loading ? <Spinner /> : !entries?.length ? (
             <EmptyState icon={Zap} title="No pain entries" description="Track pain and injuries here." />
           ) : (
             (entries || []).map(entry => (
               <div
                 key={entry.id}
-                className={`list-item${selected?.id === entry.id ? ' active' : ''}`}
                 onClick={() => setSelected(entry)}
+                className={[
+                  'px-4 py-3.5 border-b border-border last:border-b-0 cursor-pointer transition-colors',
+                  selected?.id === entry.id
+                    ? 'bg-accent/8 border-l-2 border-l-accent'
+                    : 'hover:bg-hover',
+                ].join(' ')}
               >
-                <div style={styles.entryDate}>{formatDate(entry.date)}</div>
-                <div style={styles.entryRow}>
-                  <span style={styles.bodyPart}>{entry.body_part}</span>
+                <div className="text-[10px] font-semibold tracking-[0.08em] uppercase text-ink-3 mb-1">
+                  {formatDate(entry.date)}
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] font-semibold capitalize">{entry.body_part}</span>
                   <SeverityDots severity={entry.severity} />
                 </div>
                 {entry.description && (
-                  <div style={styles.entryDesc}>{entry.description.slice(0, 60)}{entry.description.length > 60 ? '…' : ''}</div>
+                  <div className="text-[11px] text-ink-3 mt-1 leading-relaxed">
+                    {entry.description.slice(0, 60)}{entry.description.length > 60 ? '…' : ''}
+                  </div>
                 )}
               </div>
             ))
@@ -74,49 +87,51 @@ export default function PainLog() {
         </div>
 
         {/* Form or detail */}
-        <div className="split-panel">
+        <div className="border border-border rounded bg-card p-6 overflow-y-auto flex flex-col gap-4">
           {selected ? (
             <PainDetail entry={selected} onClose={resetForm} />
           ) : (
-            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-3)' }}>
+            <form onSubmit={submit} className="flex flex-col gap-4">
+              <div className="text-[10px] font-bold tracking-[0.12em] uppercase text-ink-3">
                 Log Pain Entry
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Date</label>
-                <input type="date" value={form.date} onChange={e => set('date', e.target.value)} required />
+              <div className="flex flex-col gap-1.5">
+                <label className={LABEL_CLS}>Date</label>
+                <input type="date" value={form.date} onChange={e => set('date', e.target.value)} required
+                  className={INPUT_CLS} />
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Body Part</label>
-                <select value={form.body_part} onChange={e => set('body_part', e.target.value)}>
+              <div className="flex flex-col gap-1.5">
+                <label className={LABEL_CLS}>Body Part</label>
+                <select value={form.body_part} onChange={e => set('body_part', e.target.value)}
+                  className={INPUT_CLS}>
                   {BODY_PARTS.map(p => <option key={p} value={p}>{p.charAt(0).toUpperCase() + p.slice(1)}</option>)}
                 </select>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">
-                  Severity — <span style={{ color: SEVERITY_COLOR[form.severity], fontWeight: 700 }}>
+              <div className="flex flex-col gap-1.5">
+                <label className={LABEL_CLS}>
+                  Severity "” <span className="font-bold" style={{ color: SEVERITY_COLOR[form.severity] }}>
                     {SEVERITY_LABEL[form.severity]}
                   </span>
                 </label>
-                <div style={styles.sliderWrap}>
+                <div className="flex flex-col gap-2.5">
                   <input
                     type="range" min={1} max={5} value={form.severity}
                     onChange={e => set('severity', parseInt(e.target.value))}
-                    style={styles.slider}
+                    className="w-full cursor-pointer accent-accent"
                   />
-                  <div style={styles.dotsRow}>
+                  <div className="flex gap-3 items-center justify-between px-1">
                     {[1, 2, 3, 4, 5].map(n => (
                       <button
                         key={n}
                         type="button"
                         onClick={() => set('severity', n)}
+                        className="w-3 h-3 rounded-full border-none cursor-pointer transition-transform duration-150"
                         style={{
-                          ...styles.dot,
-                          background: form.severity >= n ? SEVERITY_COLOR[n] : 'var(--border)',
-                          transform: form.severity === n ? 'scale(1.4)' : 'scale(1)',
+                          background:  form.severity >= n ? SEVERITY_COLOR[n] : '#1c1c22',
+                          transform:   form.severity === n ? 'scale(1.4)' : 'scale(1)',
                         }}
                         title={SEVERITY_LABEL[n]}
                       />
@@ -125,13 +140,13 @@ export default function PainLog() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Description</label>
+              <div className="flex flex-col gap-1.5">
+                <label className={LABEL_CLS}>Description</label>
                 <textarea
                   value={form.description}
                   onChange={e => set('description', e.target.value)}
                   placeholder="Describe the pain, when it started, activity triggers..."
-                  style={{ minHeight: 120 }}
+                  className={`${INPUT_CLS} min-h-[120px] resize-y`}
                 />
               </div>
 
@@ -142,22 +157,16 @@ export default function PainLog() {
           )}
         </div>
       </div>
-
-      <style>{`
-        input[type=range] { accent-color: var(--accent); }
-      `}</style>
     </div>
   )
 }
 
 function SeverityDots({ severity }) {
   return (
-    <div style={{ display: 'flex', gap: 3, alignItems: 'center' }}>
+    <div className="flex gap-[3px] items-center">
       {[1, 2, 3, 4, 5].map(n => (
-        <div key={n} style={{
-          width: 6, height: 6, borderRadius: '50%',
-          background: severity >= n ? SEVERITY_COLOR[n] : 'var(--border)',
-        }} />
+        <div key={n} className="w-1.5 h-1.5 rounded-full"
+          style={{ background: severity >= n ? SEVERITY_COLOR[n] : '#1c1c22' }} />
       ))}
     </div>
   )
@@ -165,20 +174,20 @@ function SeverityDots({ severity }) {
 
 function PainDetail({ entry, onClose }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-start">
         <div>
-          <div style={{ fontSize: 10, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{formatDate(entry.date)}</div>
-          <div style={{ fontSize: 20, fontWeight: 700 }}>{entry.body_part}</div>
+          <div className="text-[10px] text-ink-3 uppercase tracking-[0.1em] mb-1">{formatDate(entry.date)}</div>
+          <div className="text-[20px] font-bold">{entry.body_part}</div>
         </div>
         <Button variant="ghost" size="sm" onClick={onClose}>Close</Button>
       </div>
 
       <div>
-        <div style={{ fontSize: 10, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Severity</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div className={SECTION_LABEL}>Severity</div>
+        <div className="flex items-center gap-2.5">
           <SeverityDots severity={entry.severity} />
-          <span style={{ fontSize: 14, fontWeight: 700, color: SEVERITY_COLOR[entry.severity] }}>
+          <span className="text-sm font-bold" style={{ color: SEVERITY_COLOR[entry.severity] }}>
             {SEVERITY_LABEL[entry.severity]} ({entry.severity}/5)
           </span>
         </div>
@@ -186,61 +195,11 @@ function PainDetail({ entry, onClose }) {
 
       {entry.description && (
         <div>
-          <div style={{ fontSize: 10, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Notes</div>
-          <div style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.7 }}>{entry.description}</div>
+          <div className={SECTION_LABEL}>Notes</div>
+          <div className="text-[13px] text-ink leading-[1.7]">{entry.description}</div>
         </div>
       )}
     </div>
   )
 }
 
-const styles = {
-  entryDate: {
-    fontSize: 10,
-    fontWeight: 600,
-    letterSpacing: '0.08em',
-    color: 'var(--text-3)',
-    textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  entryRow: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  bodyPart: {
-    fontSize: 13,
-    fontWeight: 600,
-    textTransform: 'capitalize',
-  },
-  entryDesc: {
-    fontSize: 11,
-    color: 'var(--text-3)',
-    marginTop: 4,
-    lineHeight: 1.5,
-  },
-  sliderWrap: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 10,
-  },
-  slider: {
-    width: '100%',
-    cursor: 'pointer',
-  },
-  dotsRow: {
-    display: 'flex',
-    gap: 12,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0 4px',
-  },
-  dot: {
-    width: 12,
-    height: 12,
-    borderRadius: '50%',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'transform 0.15s, background 0.15s',
-  },
-}

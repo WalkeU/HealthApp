@@ -16,13 +16,15 @@ import { useHrTrend, useHrvTrend, useSleepTrend, useBbTrend } from '../hooks/use
 import { formatPace, formatDistance, formatDate, formatDuration } from '../utils/format.js'
 
 const CHART = {
-  grid:    { strokeDasharray: '3 3', stroke: 'var(--border)', vertical: false },
-  xAxis:   { stroke: 'transparent', tick: { fill: 'var(--text-3)', fontSize: 10, fontFamily: 'inherit' } },
-  yAxis:   { stroke: 'transparent', tick: { fill: 'var(--text-3)', fontSize: 10, fontFamily: 'inherit' }, width: 36 },
+  grid:    { strokeDasharray: '3 3', stroke: '#1c1c22', vertical: false },
+  xAxis:   { stroke: 'transparent', tick: { fill: '#444460', fontSize: 10, fontFamily: 'inherit' } },
+  yAxis:   { stroke: 'transparent', tick: { fill: '#444460', fontSize: 10, fontFamily: 'inherit' }, width: 36 },
   tooltip: { contentStyle: { background: '#111115', border: '1px solid #1c1c22', color: '#dddde8', fontFamily: 'inherit', fontSize: 12 }, cursor: { fill: 'rgba(0,255,135,0.04)' } },
 }
 
 const SLEEP_COLORS = { deep: '#6366f1', rem: '#00ff87', light: '#60a5fa', awake: '#f59e0b' }
+
+const SECTION_TITLE = 'text-[10px] font-semibold tracking-[0.1em] uppercase text-ink-3'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -39,13 +41,13 @@ export default function Dashboard() {
   const today  = s.todayHealth  || {}
 
   return (
-    <div className="page">
+    <div className="p-7 max-w-[1280px]">
       <TopBar title="Dashboard" />
 
       {loading ? <Spinner /> : (
         <>
           {/* ── Stat cards ── */}
-          <div className="stat-grid" style={{ marginBottom: 24 }}>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3 mb-6">
             <StatCard
               label="Weekly km"
               value={weekly.total_km ?? '0'}
@@ -76,9 +78,9 @@ export default function Dashboard() {
           </div>
 
           {/* ── Charts ── */}
-          <div className="chart-grid">
+          <div className="grid grid-cols-2 gap-3 mb-6">
             <Card>
-              <div style={styles.chartTitle}>Weekly Mileage</div>
+              <div className={SECTION_TITLE}>Weekly Mileage</div>
               {mileage?.length ? (
                 <ResponsiveContainer width="100%" height={160}>
                   <BarChart data={mileage} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -86,14 +88,14 @@ export default function Dashboard() {
                     <XAxis dataKey="week" {...CHART.xAxis} tickFormatter={w => w?.slice(6) || w} />
                     <YAxis {...CHART.yAxis} />
                     <Tooltip {...CHART.tooltip} formatter={v => [`${v} km`, 'Distance']} />
-                    <Bar dataKey="total_km" fill="var(--accent)" radius={[2, 2, 0, 0]} maxBarSize={28} />
+                    <Bar dataKey="total_km" fill="#00ff87" radius={[2, 2, 0, 0]} maxBarSize={28} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : <EmptyState title="No run data yet" />}
             </Card>
 
             <Card>
-              <div style={styles.chartTitle}>Resting HR</div>
+              <div className={SECTION_TITLE}>Resting HR</div>
               {hrData?.length ? (
                 <ResponsiveContainer width="100%" height={160}>
                   <LineChart data={hrData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -101,14 +103,14 @@ export default function Dashboard() {
                     <XAxis dataKey="date" {...CHART.xAxis} tickFormatter={d => d?.slice(5)} interval="preserveStartEnd" />
                     <YAxis {...CHART.yAxis} domain={['auto', 'auto']} />
                     <Tooltip {...CHART.tooltip} formatter={v => [`${Math.round(v)} bpm`, 'HR']} />
-                    <Line dataKey="avg_resting_hr" stroke="var(--danger)" strokeWidth={1.5} dot={false} />
+                    <Line dataKey="avg_resting_hr" stroke="#ff4d6a" strokeWidth={1.5} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
               ) : <EmptyState title="No HR data yet" />}
             </Card>
 
             <Card>
-              <div style={styles.chartTitle}>HRV (last night)</div>
+              <div className={SECTION_TITLE}>HRV (last night)</div>
               {hrvData?.length ? (
                 <ResponsiveContainer width="100%" height={160}>
                   <LineChart data={hrvData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -116,14 +118,14 @@ export default function Dashboard() {
                     <XAxis dataKey="date" {...CHART.xAxis} tickFormatter={d => d?.slice(5)} interval="preserveStartEnd" />
                     <YAxis {...CHART.yAxis} domain={['auto', 'auto']} />
                     <Tooltip {...CHART.tooltip} formatter={v => [`${Math.round(v)} ms`, 'HRV']} />
-                    <Line dataKey="avg_hrv" stroke="var(--accent)" strokeWidth={1.5} dot={false} />
+                    <Line dataKey="avg_hrv" stroke="#00ff87" strokeWidth={1.5} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
               ) : <EmptyState title="No HRV data yet" />}
             </Card>
 
             <Card>
-              <div style={styles.chartTitle}>Sleep duration</div>
+              <div className={SECTION_TITLE}>Sleep duration</div>
               {sleepData?.length ? (
                 <ResponsiveContainer width="100%" height={160}>
                   <BarChart data={sleepData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
@@ -142,28 +144,28 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* ── Today's sleep (only if date matches today) ── */}
+          {/* ── Today's sleep ── */}
           {today.date === new Date().toISOString().slice(0, 10) && (
             <SleepCard today={today} onViewAll={() => navigate('/sleep')} />
           )}
 
           {/* ── Recent runs ── */}
-          <Card padding="0">
-            <div style={styles.tableHeader}>
-              <span style={styles.tableTitle}>Recent Runs</span>
+          <Card className="!p-0">
+            <div className="px-4 py-3.5 border-b border-border">
+              <span className={SECTION_TITLE}>Recent Runs</span>
             </div>
             {s.recentRuns?.length ? (
-              <table className="data-table">
+              <DataTable>
                 <thead>
                   <tr>
-                    <th>Date</th><th>Name</th><th>Distance</th>
-                    <th>Duration</th><th>Pace</th><th>Avg HR</th><th>Source</th>
+                    <Th>Date</Th><Th>Name</Th><Th>Distance</Th>
+                    <Th>Duration</Th><Th>Pace</Th><Th>Avg HR</Th><Th>Source</Th>
                   </tr>
                 </thead>
                 <tbody>
                   {s.recentRuns.map(run => <RunRow key={run.id} run={run} />)}
                 </tbody>
-              </table>
+              </DataTable>
             ) : (
               <EmptyState icon={Activity} title="No runs yet" description="Sync from Garmin to see your runs here." />
             )}
@@ -174,7 +176,7 @@ export default function Dashboard() {
   )
 }
 
-// ─── Sleep card (single — no duplicate) ──────────────────────────────────────
+// ─── Sleep card ───────────────────────────────────────────────────────────────
 
 function SleepCard({ today, onViewAll }) {
   const hasAny = today.sleep_duration_s || today.deep_sleep_s || today.rem_sleep_s
@@ -195,57 +197,64 @@ function SleepCard({ today, onViewAll }) {
   const total = segments.reduce((sum, s) => sum + (today[s.key] ?? 0), 0)
 
   return (
-    <Card style={{ marginBottom: 16 }} padding="18px 20px">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-        <div>
-          <div style={styles.chartTitle} >Last night — {today.date || ''}</div>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 2 }}>
-            {today.sleep_duration_s && <span style={styles.bigStat}>{fmtH(today.sleep_duration_s)}</span>}
-            {today.sleep_score != null && (
-              <span style={{ fontSize: 11, color: 'var(--text-2)' }}>
-                score <span style={{ fontWeight: 700, color: scoreColor(today.sleep_score) }}>{today.sleep_score}</span>
-              </span>
-            )}
-            {today.spo2_avg != null && (
-              <span style={{ fontSize: 11, color: 'var(--text-2)' }}>
-                SpO2 <span style={{ fontWeight: 700 }}>{Math.round(today.spo2_avg)}%</span>
-              </span>
-            )}
+    <Card className="mb-4 !p-0">
+      <div className="px-5 py-[18px]">
+        <div className="flex items-center justify-between mb-3.5">
+          <div>
+            <div className="text-[10px] font-semibold tracking-[0.1em] uppercase text-ink-3">
+              Last night — {today.date || ''}
+            </div>
+            <div className="flex gap-3 items-center mt-0.5">
+              {today.sleep_duration_s && (
+                <span className="text-[22px] font-bold tracking-[-0.02em]">{fmtH(today.sleep_duration_s)}</span>
+              )}
+              {today.sleep_score != null && (
+                <span className="text-[11px] text-ink-2">
+                  score <span className="font-bold" style={{ color: scoreColor(today.sleep_score) }}>{today.sleep_score}</span>
+                </span>
+              )}
+              {today.spo2_avg != null && (
+                <span className="text-[11px] text-ink-2">
+                  SpO2 <span className="font-bold">{Math.round(today.spo2_avg)}%</span>
+                </span>
+              )}
+            </div>
           </div>
+          <button
+            onClick={onViewAll}
+            className="flex items-center gap-1 text-[11px] text-ink-2 bg-transparent border border-border rounded px-2.5 py-1 cursor-pointer transition-colors hover:bg-hover"
+          >
+            Sleep history <ArrowRight size={12} />
+          </button>
         </div>
-        <button onClick={onViewAll} style={styles.viewAll}>
-          Sleep history <ArrowRight size={12} />
-        </button>
+
+        <SleepTimeline date={today.date} />
+
+        {total > 0 && (
+          <div className="mt-3.5">
+            <div className="flex h-3 rounded-sm overflow-hidden gap-px mb-2">
+              {segments.map(({ key, color }) => {
+                const v = today[key] ?? 0
+                return v ? <div key={key} style={{ flex: v, background: color }} /> : null
+              })}
+            </div>
+            <div className="flex gap-3.5 flex-wrap">
+              {segments.map(({ key, label, color }) => {
+                const v = today[key]
+                if (!v) return null
+                return (
+                  <div key={key} className="flex items-center gap-[5px]">
+                    <div className="w-[7px] h-[7px] rounded-sm" style={{ background: color }} />
+                    <span className="text-[10px] text-ink-3">{label}</span>
+                    <span className="text-[11px] font-semibold">{fmtH(v)}</span>
+                    <span className="text-[10px] text-ink-3">{Math.round(v / total * 100)}%</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Phase timeline */}
-      <SleepTimeline date={today.date} />
-
-      {/* Breakdown bar */}
-      {total > 0 && (
-        <div style={{ marginTop: 14 }}>
-          <div style={{ display: 'flex', height: 12, borderRadius: 2, overflow: 'hidden', gap: 1, marginBottom: 8 }}>
-            {segments.map(({ key, color }) => {
-              const v = today[key] ?? 0
-              return v ? <div key={key} style={{ flex: v, background: color }} /> : null
-            })}
-          </div>
-          <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-            {segments.map(({ key, label, color }) => {
-              const v = today[key]
-              if (!v) return null
-              return (
-                <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <div style={{ width: 7, height: 7, borderRadius: 1, background: color }} />
-                  <span style={{ fontSize: 10, color: 'var(--text-3)' }}>{label}</span>
-                  <span style={{ fontSize: 11, fontWeight: 600 }}>{fmtH(v)}</span>
-                  <span style={{ fontSize: 10, color: 'var(--text-3)' }}>{Math.round(v / total * 100)}%</span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
     </Card>
   )
 }
@@ -257,36 +266,38 @@ function BodyBatteryCard({ today, bbData }) {
   const low     = today.body_battery_low ?? 0
   const charged = today.body_battery_charged
   const drained = today.body_battery_drained
-  const color   = high >= 75 ? 'var(--accent)' : high >= 40 ? 'var(--warning)' : 'var(--danger)'
+  const color   = high >= 75 ? '#00ff87' : high >= 40 ? '#ffb340' : '#ff4d6a'
 
   return (
-    <Card padding="16px 18px">
-      <div style={styles.chartTitle}>Body Battery</div>
+    <Card className="!px-[18px] !py-4">
+      <div className="text-[10px] font-semibold tracking-[0.1em] uppercase text-ink-3">Body Battery</div>
 
-      {/* Top row: value + charged/drained */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 0 10px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
-          <span style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em', color }}>{high}</span>
-          <span style={{ fontSize: 11, color: 'var(--text-3)' }}>/ 100</span>
+      <div className="flex items-center justify-between my-2 mb-2.5">
+        <div className="flex items-baseline gap-[5px]">
+          <span className="text-[28px] font-bold tracking-[-0.02em]" style={{ color }}>{high}</span>
+          <span className="text-[11px] text-ink-3">/ 100</span>
         </div>
-        <div style={{ fontSize: 11, color: 'var(--text-3)', textAlign: 'right', lineHeight: 1.6 }}>
-          {charged != null && <div><span style={{ color: 'var(--accent)' }}>+{charged}</span> charged</div>}
-          {drained != null && <div><span style={{ color: 'var(--danger)' }}>-{drained}</span> drained</div>}
+        <div className="text-[11px] text-ink-3 text-right leading-relaxed">
+          {charged != null && <div><span className="text-accent">+{charged}</span> charged</div>}
+          {drained != null && <div><span className="text-danger">-{drained}</span> drained</div>}
         </div>
       </div>
 
       {/* Gauge bar */}
-      <div style={{ position: 'relative', height: 8, background: 'var(--bg)', borderRadius: 4, overflow: 'hidden', border: '1px solid var(--border)', marginBottom: 4 }}>
-        <div style={{
-          position: 'absolute', left: `${low}%`, width: `${Math.max(high - low, 2)}%`,
-          height: '100%', background: `linear-gradient(90deg, var(--warning), ${color})`, borderRadius: 4,
-        }} />
+      <div className="relative h-2 bg-surface rounded border border-border overflow-hidden mb-1">
+        <div
+          className="absolute h-full rounded"
+          style={{
+            left:       `${low}%`,
+            width:      `${Math.max(high - low, 2)}%`,
+            background: `linear-gradient(90deg, #ffb340, ${color})`,
+          }}
+        />
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, color: 'var(--text-3)', marginBottom: 10 }}>
+      <div className="flex justify-between text-[9px] text-ink-3 mb-2.5">
         <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
       </div>
 
-      {/* Trend */}
       {bbData?.length > 1 && (
         <ResponsiveContainer width="100%" height={90}>
           <LineChart data={bbData} margin={{ top: 2, right: 4, left: 0, bottom: 0 }}>
@@ -294,8 +305,8 @@ function BodyBatteryCard({ today, bbData }) {
             <XAxis dataKey="date" {...CHART.xAxis} tickFormatter={d => d?.slice(5)} interval="preserveStartEnd" />
             <YAxis {...CHART.yAxis} domain={[0, 100]} />
             <Tooltip {...CHART.tooltip} formatter={(v, name) => [Math.round(v), name === 'high' ? 'Peak' : 'Low']} />
-            <Line dataKey="high" stroke={color}           strokeWidth={1.5} dot={false} />
-            <Line dataKey="low"  stroke="var(--text-3)"   strokeWidth={1}   dot={false} strokeDasharray="3 3" />
+            <Line dataKey="high" stroke={color}     strokeWidth={1.5} dot={false} />
+            <Line dataKey="low"  stroke="#444460"   strokeWidth={1}   dot={false} strokeDasharray="3 3" />
           </LineChart>
         </ResponsiveContainer>
       )}
@@ -304,39 +315,49 @@ function BodyBatteryCard({ today, bbData }) {
 }
 
 function HrvStatus({ status }) {
-  const map = { BALANCED: { color: 'var(--accent)', label: 'Balanced' }, UNBALANCED: { color: 'var(--warning)', label: 'Unbalanced' }, LOW: { color: 'var(--danger)', label: 'Low' } }
-  const m = map[status] || { color: 'var(--text-3)', label: status }
-  return <span style={{ color: m.color, fontSize: 10, fontWeight: 700 }}>{m.label}</span>
+  const map = {
+    BALANCED:   { colorClass: 'text-accent',  label: 'Balanced' },
+    UNBALANCED: { colorClass: 'text-warn',    label: 'Unbalanced' },
+    LOW:        { colorClass: 'text-danger',  label: 'Low' },
+  }
+  const m = map[status] || { colorClass: 'text-ink-3', label: status }
+  return <span className={`text-[10px] font-bold ${m.colorClass}`}>{m.label}</span>
 }
 
 function scoreColor(s) {
-  return s >= 80 ? 'var(--accent)' : s >= 60 ? 'var(--warning)' : 'var(--danger)'
+  return s >= 80 ? '#00ff87' : s >= 60 ? '#ffb340' : '#ff4d6a'
+}
+
+// ─── Table helpers ────────────────────────────────────────────────────────────
+
+function DataTable({ children }) {
+  return (
+    <table className="w-full border-collapse">
+      {children}
+    </table>
+  )
+}
+
+function Th({ children }) {
+  return (
+    <th className="text-left text-[10px] font-semibold tracking-[0.12em] uppercase text-ink-3 px-4 pb-2.5 border-b border-border">
+      {children}
+    </th>
+  )
 }
 
 function RunRow({ run }) {
   return (
-    <tr>
-      <td style={{ color: 'var(--text-2)', fontSize: 12 }}>{formatDate(run.date)}</td>
-      <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {run.name || <span style={{ color: 'var(--text-3)' }}>—</span>}
+    <tr className="border-b border-border last:border-b-0 cursor-pointer transition-colors hover:[&>td]:bg-hover">
+      <td className="px-4 py-3 text-[12px] text-ink-2">{formatDate(run.date)}</td>
+      <td className="px-4 py-3 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap text-[13px]">
+        {run.name || <span className="text-ink-3">—</span>}
       </td>
-      <td style={{ color: 'var(--accent)', fontWeight: 600 }}>{formatDistance(run.distance_m)}</td>
-      <td>{formatDuration(run.duration_s)}</td>
-      <td>{formatPace(run.avg_pace_s)}</td>
-      <td>{run.avg_hr ? `${run.avg_hr} bpm` : '—'}</td>
-      <td style={{ color: 'var(--text-3)', fontSize: 11 }}>{run.source}</td>
+      <td className="px-4 py-3 text-[13px] text-accent font-semibold">{formatDistance(run.distance_m)}</td>
+      <td className="px-4 py-3 text-[13px]">{formatDuration(run.duration_s)}</td>
+      <td className="px-4 py-3 text-[13px]">{formatPace(run.avg_pace_s)}</td>
+      <td className="px-4 py-3 text-[13px]">{run.avg_hr ? `${run.avg_hr} bpm` : '—'}</td>
+      <td className="px-4 py-3 text-[11px] text-ink-3">{run.source}</td>
     </tr>
   )
-}
-
-const styles = {
-  chartTitle:  { fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-3)' },
-  bigStat:     { fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em' },
-  tableHeader: { padding: '14px 16px', borderBottom: '1px solid var(--border)' },
-  tableTitle:  { fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-3)' },
-  viewAll: {
-    display: 'flex', alignItems: 'center', gap: 4,
-    fontSize: 11, color: 'var(--text-2)', background: 'none', border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)', padding: '4px 10px', cursor: 'pointer',
-  },
 }

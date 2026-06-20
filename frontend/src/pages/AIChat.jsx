@@ -12,6 +12,8 @@ function useAnalysis() {
   return useFetch(() => api.getAnalysis(), [])
 }
 
+const ST = 'text-[10px] font-bold tracking-[0.12em] uppercase text-ink-3'
+
 export default function AIChat() {
   const { data: analysis, loading, refetch } = useAnalysis()
   const [promptVisible, setPromptVisible] = useState(false)
@@ -38,85 +40,84 @@ export default function AIChat() {
   }
 
   return (
-    <div className="page">
-      <TopBar title="AI Elemzés">
+    <div className="p-7 max-w-[1280px]">
+      <TopBar title="Insights">
         <Button variant="ghost" size="sm" onClick={refetch} disabled={loading}>
-          <RefreshCw size={13} style={loading ? { animation: 'spin 1s linear infinite' } : {}} />
-          Frissítés
+          <RefreshCw size={13} className={loading ? 'animate-spin-slow' : ''} />
+          Refresh
         </Button>
       </TopBar>
 
       {loading ? <Spinner /> : !analysis ? (
-        <div style={{ color: 'var(--text-3)', fontSize: 13 }}>Nincs elegendő adat az elemzéshez.</div>
+        <div className="text-[13px] text-ink-3">Not enough data to generate insights yet.</div>
       ) : (
-        <div style={styles.layout}>
-          {/* ── Scores row ── */}
-          <div style={styles.scoreGrid}>
-            <ScoreCard label="Felépülési készenlét" value={analysis.scores.recovery} label2={analysis.scores.recovery_label} />
-            <ScoreCard label="Edzéskockázat" value={analysis.scores.training_risk} label2={analysis.scores.risk_label} invert />
-            <ScoreCard label="Alváskvalitás" value={analysis.scores.sleep_quality} />
-            <ScoreCard label="Forma index" value={analysis.scores.overall} />
+        <div className="flex flex-col gap-4">
+
+          {/* ── Score cards ── */}
+          <div className="grid grid-cols-4 gap-3">
+            <ScoreCard label="Recovery Readiness" value={analysis.scores.recovery} label2={analysis.scores.recovery_label} />
+            <ScoreCard label="Training Risk"       value={analysis.scores.training_risk} label2={analysis.scores.risk_label} invert />
+            <ScoreCard label="Sleep Quality"       value={analysis.scores.sleep_quality} />
+            <ScoreCard label="Form Index"          value={analysis.scores.overall} />
           </div>
 
           {/* ── Flags ── */}
           {analysis.flags.length > 0 && (
-            <Card padding="0" style={{ marginBottom: 16 }}>
-              <div style={styles.sectionHeader}>
-                <span style={styles.sectionTitle}>Azonosított jelek</span>
-                <div style={{ display: 'flex', gap: 6 }}>
+            <Card className="!p-0">
+              <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+                <span className={ST}>Signals</span>
+                <div className="flex gap-1.5">
                   {analysis.flags.filter(f => f.level === 'RED').length > 0 && (
-                    <Badge color="danger">{analysis.flags.filter(f => f.level === 'RED').length} kritikus</Badge>
+                    <Badge color="danger">{analysis.flags.filter(f => f.level === 'RED').length} critical</Badge>
                   )}
                   {analysis.flags.filter(f => f.level === 'YELLOW').length > 0 && (
-                    <Badge color="warning">{analysis.flags.filter(f => f.level === 'YELLOW').length} figyelő</Badge>
+                    <Badge color="warning">{analysis.flags.filter(f => f.level === 'YELLOW').length} warning</Badge>
                   )}
                 </div>
               </div>
-              <div style={{ padding: '8px 0' }}>
-                {analysis.flags.map((flag, i) => (
-                  <FlagRow key={i} flag={flag} />
-                ))}
+              <div className="py-2">
+                {analysis.flags.map((flag, i) => <FlagRow key={i} flag={flag} />)}
               </div>
             </Card>
           )}
 
-          {/* ── Key metrics ── */}
-          <div style={styles.metricsGrid}>
-            <MetricBlock title="Edzésterhelés">
-              <MetricRow label="ACWR" value={analysis.metrics.acwr ?? '—'} note={acwrLabel(analysis.metrics.acwr)} />
-              <MetricRow label="Heti km (akut)" value={analysis.metrics.acute_km != null ? `${analysis.metrics.acute_km} km` : '—'} />
-              <MetricRow label="Krónikus átlag" value={analysis.metrics.chronic_km != null ? `${analysis.metrics.chronic_km?.toFixed(1)} km/hét` : '—'} />
-              <MetricRow label="Mileage trend" value={analysis.metrics.mileage_trend} />
+          {/* ── Metric blocks ── */}
+          <div className="grid grid-cols-2 gap-3">
+            <MetricBlock title="Training Load">
+              <MetricRow label="ACWR"            value={analysis.metrics.acwr ?? '—'} note={acwrLabel(analysis.metrics.acwr)} />
+              <MetricRow label="Acute km/wk"     value={analysis.metrics.acute_km != null ? `${analysis.metrics.acute_km} km` : '—'} />
+              <MetricRow label="Chronic avg"     value={analysis.metrics.chronic_km != null ? `${analysis.metrics.chronic_km?.toFixed(1)} km/wk` : '—'} />
+              <MetricRow label="Mileage trend"   value={analysis.metrics.mileage_trend} />
               {analysis.metrics.vo2_latest && (
                 <MetricRow label="VO2max" value={`${analysis.metrics.vo2_latest} ml/kg/min`} note={analysis.metrics.vo2_trend} />
               )}
             </MetricBlock>
 
-            <MetricBlock title="Felépülés">
-              <MetricRow label="HRV (utolsó éjjel)" value={analysis.metrics.hrv_last ? `${Math.round(analysis.metrics.hrv_last)} ms` : '—'} />
-              <MetricRow label="HRV baseline %" value={analysis.metrics.hrv_relative != null ? `${Math.round(analysis.metrics.hrv_relative * 100)}%` : '—'} note={analysis.metrics.hrv_status} />
-              <MetricRow label="Nyug. HR (mai)" value={analysis.metrics.hr_today ? `${analysis.metrics.hr_today} bpm` : '—'} />
-              <MetricRow label="HR eltérés" value={analysis.metrics.hr_elevation != null ? `${analysis.metrics.hr_elevation > 0 ? '+' : ''}${analysis.metrics.hr_elevation} bpm` : '—'} />
-              <MetricRow label="Body Battery csúcs" value={analysis.metrics.bb_today_high != null ? `${analysis.metrics.bb_today_high}/100` : '—'} note={analysis.metrics.bb_trend} />
+            <MetricBlock title="Recovery">
+              <MetricRow label="HRV last night"  value={analysis.metrics.hrv_last ? `${Math.round(analysis.metrics.hrv_last)} ms` : '—'} />
+              <MetricRow label="HRV vs baseline" value={analysis.metrics.hrv_relative != null ? `${Math.round(analysis.metrics.hrv_relative * 100)}%` : '—'} note={analysis.metrics.hrv_status} />
+              <MetricRow label="Resting HR"      value={analysis.metrics.hr_today ? `${analysis.metrics.hr_today} bpm` : '—'} />
+              <MetricRow label="HR deviation"    value={analysis.metrics.hr_elevation != null ? `${analysis.metrics.hr_elevation > 0 ? '+' : ''}${analysis.metrics.hr_elevation} bpm` : '—'} />
+              <MetricRow label="Body Battery"    value={analysis.metrics.bb_today_high != null ? `${analysis.metrics.bb_today_high}/100` : '—'} note={analysis.metrics.bb_trend} />
             </MetricBlock>
 
-            <MetricBlock title="Alvás (7 napos átlag)">
-              <MetricRow label="Hossz" value={fmtH(analysis.metrics.sleep_7avg_s)} />
-              <MetricRow label="Score" value={analysis.metrics.sleep_score_7avg != null ? `${analysis.metrics.sleep_score_7avg?.toFixed(0)}/100` : '—'} />
-              <MetricRow label="Mély alvás" value={analysis.metrics.deep_pct_7avg != null ? `${analysis.metrics.deep_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 16–33%" />
-              <MetricRow label="REM" value={analysis.metrics.rem_pct_7avg != null ? `${analysis.metrics.rem_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 21–31%" />
-              <MetricRow label="Alvásdeficit (7d)" value={analysis.metrics.sleep_debt_7d_h != null ? `${analysis.metrics.sleep_debt_7d_h}h` : '—'} />
+            <MetricBlock title="Sleep (7-day avg)">
+              <MetricRow label="Duration"        value={fmtH(analysis.metrics.sleep_7avg_s)} />
+              <MetricRow label="Score"           value={analysis.metrics.sleep_score_7avg != null ? `${analysis.metrics.sleep_score_7avg?.toFixed(0)}/100` : '—'} />
+              <MetricRow label="Deep sleep"      value={analysis.metrics.deep_pct_7avg != null ? `${analysis.metrics.deep_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 16–33%" />
+              <MetricRow label="REM"             value={analysis.metrics.rem_pct_7avg != null ? `${analysis.metrics.rem_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 21–31%" />
+              <MetricRow label="Sleep debt (7d)" value={analysis.metrics.sleep_debt_7d_h != null ? `${analysis.metrics.sleep_debt_7d_h}h` : '—'} />
             </MetricBlock>
 
-            <MetricBlock title="Fájdalom (30 nap)">
+            <MetricBlock title="Pain (30 days)">
               {analysis.metrics.pain_7d?.length === 0 && analysis.metrics.chronic_pain_parts?.length === 0 ? (
-                <div style={{ fontSize: 12, color: 'var(--accent)', padding: '4px 0' }}>✓ Nincs fájdalom bejegyzés</div>
+                <div className="text-xs text-accent py-1">No pain entries</div>
               ) : (
                 <>
-                  <MetricRow label="Elmúlt 7 nap" value={`${analysis.metrics.pain_7d?.length ?? 0} bejegyzés`} />
-                  <MetricRow label="Átlag súlyosság" value={analysis.metrics.pain_severity_avg > 0 ? `${analysis.metrics.pain_severity_avg?.toFixed(1)}/5` : '—'} />
+                  <MetricRow label="Last 7 days"   value={`${analysis.metrics.pain_7d?.length ?? 0} entries`} />
+                  <MetricRow label="Avg severity"  value={analysis.metrics.pain_severity_avg > 0 ? `${analysis.metrics.pain_severity_avg?.toFixed(1)}/5` : '—'} />
                   {analysis.metrics.chronic_pain_parts?.map(cp => (
-                    <MetricRow key={cp.body_part} label={`Krónikus: ${cp.body_part}`} value={`${cp.count}x, súly: ${cp.avg_severity}`} />
+                    <MetricRow key={cp.body_part} label={`Chronic: ${cp.body_part}`} value={`${cp.count}x, sev: ${cp.avg_severity}`} />
                   ))}
                 </>
               )}
@@ -125,26 +126,26 @@ export default function AIChat() {
 
           {/* ── Recent runs ── */}
           {analysis.metrics.recent_runs?.length > 0 && (
-            <Card padding="0" style={{ marginBottom: 16 }}>
-              <div style={styles.sectionHeader}>
-                <span style={styles.sectionTitle}>Utolsó futások</span>
+            <Card className="!p-0">
+              <div className="px-4 py-3 border-b border-border">
+                <span className={ST}>Recent Runs</span>
               </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <table className="w-full border-collapse text-xs">
                 <thead>
-                  <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                    {['Dátum','Km','Tempó','HR','TE'].map(h => (
-                      <th key={h} style={{ padding: '6px 12px', textAlign: 'left', fontSize: 10, color: 'var(--text-3)', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{h}</th>
+                  <tr className="border-b border-border">
+                    {['Date','km','Pace','HR','TE'].map(h => (
+                      <th key={h} className="px-3 py-1.5 text-left text-[10px] text-ink-3 font-semibold tracking-[0.1em] uppercase">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {analysis.metrics.recent_runs.slice(0, 7).map((r, i) => (
-                    <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
-                      <td style={{ padding: '8px 12px', color: 'var(--text-2)' }}>{r.date}</td>
-                      <td style={{ padding: '8px 12px', color: 'var(--accent)', fontWeight: 600 }}>{r.km}</td>
-                      <td style={{ padding: '8px 12px' }}>{r.pace_s ? `${Math.floor(r.pace_s/60)}:${String(Math.round(r.pace_s%60)).padStart(2,'0')}` : '—'}</td>
-                      <td style={{ padding: '8px 12px' }}>{r.avg_hr ? `${r.avg_hr} bpm` : '—'}</td>
-                      <td style={{ padding: '8px 12px' }}>{r.aerobic_te ? r.aerobic_te.toFixed(1) : '—'}</td>
+                    <tr key={i} className="border-b border-border last:border-b-0">
+                      <td className="px-3 py-2 text-ink-2">{r.date}</td>
+                      <td className="px-3 py-2 text-accent font-semibold">{r.km}</td>
+                      <td className="px-3 py-2">{r.pace_s ? `${Math.floor(r.pace_s/60)}:${String(Math.round(r.pace_s%60)).padStart(2,'0')}` : '—'}</td>
+                      <td className="px-3 py-2">{r.avg_hr ? `${r.avg_hr} bpm` : '—'}</td>
+                      <td className="px-3 py-2">{r.aerobic_te ? r.aerobic_te.toFixed(1) : '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -152,22 +153,22 @@ export default function AIChat() {
             </Card>
           )}
 
-          {/* ── Prompt builder ── */}
-          <Card padding="20px">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+          {/* ── LLM Prompt builder ── */}
+          <Card className="p-5">
+            <div className="flex items-start justify-between mb-3">
               <div>
-                <div style={styles.sectionTitle}>LLM Prompt — bármilyen AI-nak elküldhető</div>
-                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 3 }}>
-                  Másolás után illeszd be a ChatGPT, Claude, Gemini, vagy bármely más AI chatbe.
+                <div className={ST}>LLM Prompt — send to any AI</div>
+                <div className="text-[11px] text-ink-3 mt-1">
+                  Copy and paste into ChatGPT, Claude, Gemini, or any other AI chat.
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div className="flex gap-2">
                 <Button size="sm" onClick={copyPrompt} disabled={loadingPrompt}>
-                  {copied ? <><Check size={12} /> Másolva!</> : <><Copy size={12} /> Prompt másolása</>}
+                  {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Prompt</>}
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => { loadPrompt(); setPromptVisible(v => !v) }}>
                   {promptVisible ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-                  {promptVisible ? 'Elrejtés' : 'Megtekintés'}
+                  {promptVisible ? 'Hide' : 'Preview'}
                 </Button>
               </div>
             </div>
@@ -175,21 +176,22 @@ export default function AIChat() {
             {loadingPrompt && <Spinner size={16} />}
 
             {promptVisible && prompt && (
-              <pre style={styles.promptBox}>{prompt}</pre>
+              <pre className="bg-input border border-border rounded p-4 text-[11px] leading-[1.7] text-ink-2 max-h-[500px] overflow-y-auto whitespace-pre-wrap break-words mb-3">
+                {prompt}
+              </pre>
             )}
 
-            <div style={styles.aiHint}>
-              <Sparkles size={12} style={{ color: 'var(--accent)', flexShrink: 0 }} />
+            <div className="flex items-start gap-2 text-[11px] text-ink-3 leading-relaxed mt-1">
+              <Sparkles size={12} className="text-accent shrink-0 mt-0.5" />
               <span>
-                A prompt tartalmazza az összes mért adatot, az algoritmus előértékelését, és konkrét kérdéseket az AI számára.
-                Ha konfiguráltad az AI provider-t a Beállításokban, az AI Chat oldalon közvetlenül is elküldheted.
+                The prompt includes all measured data, the algorithmic pre-analysis, and specific questions for the AI.
+                If you have configured an AI provider in Settings, you can send it directly from the AI Chat page.
               </span>
             </div>
           </Card>
+
         </div>
       )}
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }
@@ -198,41 +200,46 @@ export default function AIChat() {
 
 function ScoreCard({ label, value, label2, invert }) {
   const color = invert
-    ? (value >= 60 ? 'var(--danger)' : value >= 30 ? 'var(--warning)' : 'var(--accent)')
-    : (value >= 75 ? 'var(--accent)' : value >= 50 ? 'var(--warning)' : 'var(--danger)')
+    ? (value >= 60 ? 'text-danger' : value >= 30 ? 'text-warn' : 'text-accent')
+    : (value >= 75 ? 'text-accent' : value >= 50 ? 'text-warn' : 'text-danger')
+  const barColor = invert
+    ? (value >= 60 ? 'bg-danger' : value >= 30 ? 'bg-warn' : 'bg-accent')
+    : (value >= 75 ? 'bg-accent' : value >= 50 ? 'bg-warn' : 'bg-danger')
 
   return (
-    <div style={styles.scoreCard}>
-      <div style={styles.scoreLabelTop}>{label}</div>
-      <div style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-0.03em', color, lineHeight: 1 }}>{value}</div>
-      <div style={styles.scoreBar}>
-        <div style={{ width: `${value}%`, height: '100%', background: color, borderRadius: 2, transition: 'width 0.5s' }} />
+    <div className="bg-card border border-border rounded p-4">
+      <div className="text-[10px] font-semibold tracking-[0.1em] uppercase text-ink-3 mb-2">{label}</div>
+      <div className={`text-[36px] font-extrabold tracking-[-0.03em] leading-none ${color}`}>{value}</div>
+      <div className="h-1 bg-surface rounded-full mt-2 overflow-hidden">
+        <div className={`h-full rounded-full transition-[width] duration-500 ${barColor}`} style={{ width: `${value}%` }} />
       </div>
-      {label2 && <div style={{ fontSize: 10, color, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 4 }}>{label2}</div>}
+      {label2 && <div className={`text-[10px] font-bold tracking-[0.06em] uppercase mt-1.5 ${color}`}>{label2}</div>}
     </div>
   )
 }
 
 function FlagRow({ flag }) {
   const [open, setOpen] = useState(false)
-  const color = flag.level === 'RED' ? 'var(--danger)' : 'var(--warning)'
-  const bg    = flag.level === 'RED' ? 'var(--danger-10)' : 'var(--warning-10)'
+  const isRed = flag.level === 'RED'
+
   return (
-    <div style={{ borderBottom: '1px solid var(--border)', cursor: flag.detail ? 'pointer' : 'default' }}
-         onClick={() => flag.detail && setOpen(v => !v)}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px' }}>
-        <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
-        <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 12 }}>{flag.message}</div>
-          <div style={{ fontSize: 10, color: 'var(--text-3)', marginTop: 1 }}>{flag.category}</div>
+    <div
+      className={`border-b border-border last:border-b-0 ${flag.detail ? 'cursor-pointer' : ''}`}
+      onClick={() => flag.detail && setOpen(v => !v)}
+    >
+      <div className="flex items-center gap-2.5 px-4 py-2.5">
+        <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${isRed ? 'bg-danger' : 'bg-warn'}`} />
+        <div className="flex-1">
+          <div className="text-xs">{flag.message}</div>
+          <div className="text-[10px] text-ink-3 mt-0.5">{flag.category}</div>
         </div>
         {flag.detail && (
-          open ? <ChevronDown size={12} style={{ color: 'var(--text-3)' }} />
-               : <ChevronRight size={12} style={{ color: 'var(--text-3)' }} />
+          open ? <ChevronDown size={12} className="text-ink-3" />
+               : <ChevronRight size={12} className="text-ink-3" />
         )}
       </div>
       {open && flag.detail && (
-        <div style={{ padding: '8px 16px 12px 32px', fontSize: 12, color: 'var(--text-2)', background: bg, lineHeight: 1.6 }}>
+        <div className={`px-4 pb-3 pt-1 ml-8 text-xs text-ink-2 leading-relaxed ${isRed ? 'bg-danger/8' : 'bg-warn/10'}`}>
           {flag.detail}
         </div>
       )}
@@ -242,8 +249,8 @@ function FlagRow({ flag }) {
 
 function MetricBlock({ title, children }) {
   return (
-    <div style={styles.metricBlock}>
-      <div style={styles.metricBlockTitle}>{title}</div>
+    <div className="bg-card border border-border rounded p-4">
+      <div className="text-[10px] font-bold tracking-[0.12em] uppercase text-ink-3 mb-3">{title}</div>
       {children}
     </div>
   )
@@ -251,11 +258,11 @@ function MetricBlock({ title, children }) {
 
 function MetricRow({ label, value, note }) {
   return (
-    <div style={styles.metricRow}>
-      <span style={styles.metricLabel}>{label}</span>
-      <span style={styles.metricValue}>
+    <div className="flex justify-between items-baseline py-1 border-b border-border last:border-b-0 text-xs">
+      <span className="text-ink-2">{label}</span>
+      <span className="font-semibold">
         {value}
-        {note && <span style={styles.metricNote}> {note}</span>}
+        {note && <span className="text-[10px] text-ink-3 font-normal"> {note}</span>}
       </span>
     </div>
   )
@@ -264,46 +271,15 @@ function MetricRow({ label, value, note }) {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function acwrLabel(acwr) {
-  if (acwr == null) return null;
-  if (acwr > 1.5) return '🔴 MAGAS KOCKÁZAT';
-  if (acwr > 1.3) return '🟡 emelt';
-  if (acwr >= 0.8) return '✓ optimális';
-  if (acwr < 0.5) return '↓ alacsony';
-  return null;
+  if (acwr == null) return null
+  if (acwr > 1.5) return '🔴 HIGH RISK'
+  if (acwr > 1.3) return '🟡 elevated'
+  if (acwr >= 0.8) return '✓ optimal'
+  if (acwr < 0.5) return '↓ low'
+  return null
 }
 
 function fmtH(s) {
-  if (!s) return '—';
-  return `${Math.floor(s / 3600)}h ${Math.round((s % 3600) / 60)}m`;
-}
-
-const styles = {
-  layout: { display: 'flex', flexDirection: 'column', gap: 16 },
-  scoreGrid: {
-    display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12,
-  },
-  scoreCard: {
-    background: 'var(--bg-card)', border: '1px solid var(--border)',
-    borderRadius: 'var(--radius)', padding: '16px 18px',
-  },
-  scoreLabelTop: { fontSize: 10, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 8 },
-  scoreBar: { height: 4, background: 'var(--bg)', borderRadius: 2, marginTop: 8, overflow: 'hidden' },
-  sectionHeader: { padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
-  sectionTitle: { fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-3)' },
-  metricsGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 },
-  metricBlock: { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '16px' },
-  metricBlockTitle: { fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-3)', marginBottom: 12 },
-  metricRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '4px 0', borderBottom: '1px solid var(--border)', fontSize: 12 },
-  metricLabel: { color: 'var(--text-2)' },
-  metricValue: { fontWeight: 600 },
-  metricNote: { fontSize: 10, color: 'var(--text-3)', fontWeight: 400 },
-  promptBox: {
-    background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: 'var(--radius)',
-    padding: '16px', fontSize: 11, lineHeight: 1.7, color: 'var(--text-2)',
-    maxHeight: 500, overflowY: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-word', marginBottom: 12,
-  },
-  aiHint: {
-    display: 'flex', alignItems: 'flex-start', gap: 8,
-    fontSize: 11, color: 'var(--text-3)', lineHeight: 1.6, marginTop: 4,
-  },
+  if (!s) return '—'
+  return `${Math.floor(s / 3600)}h ${Math.round((s % 3600) / 60)}m`
 }
