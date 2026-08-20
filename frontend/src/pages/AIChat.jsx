@@ -84,9 +84,9 @@ export default function AIChat() {
           {/* ── Metric blocks ── */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <MetricBlock title="Training Load">
-              <MetricRow label="ACWR"            value={analysis.metrics.acwr ?? '—'} note={acwrLabel(analysis.metrics.acwr)} />
-              <MetricRow label="Acute km/wk"     value={analysis.metrics.acute_km != null ? `${analysis.metrics.acute_km} km` : '—'} />
-              <MetricRow label="Chronic avg"     value={analysis.metrics.chronic_km != null ? `${analysis.metrics.chronic_km?.toFixed(1)} km/wk` : '—'} />
+              <MetricRow label="ACWR"            value={analysis.metrics.acwr ?? '—'} note={acwrLabel(analysis.metrics.acwr)} />
+              <MetricRow label="Acute km/wk"     value={analysis.metrics.acute_km != null ? `${analysis.metrics.acute_km} km` : '—'} />
+              <MetricRow label="Chronic avg"     value={analysis.metrics.chronic_km != null ? `${analysis.metrics.chronic_km?.toFixed(1)} km/wk` : '—'} />
               <MetricRow label="Mileage trend"   value={analysis.metrics.mileage_trend} />
               {analysis.metrics.vo2_latest && (
                 <MetricRow label="VO2max" value={`${analysis.metrics.vo2_latest} ml/kg/min`} note={analysis.metrics.vo2_trend} />
@@ -94,19 +94,19 @@ export default function AIChat() {
             </MetricBlock>
 
             <MetricBlock title="Recovery">
-              <MetricRow label="HRV last night"  value={analysis.metrics.hrv_last ? `${Math.round(analysis.metrics.hrv_last)} ms` : '—'} />
-              <MetricRow label="HRV vs baseline" value={analysis.metrics.hrv_relative != null ? `${Math.round(analysis.metrics.hrv_relative * 100)}%` : '—'} note={analysis.metrics.hrv_status} />
-              <MetricRow label="Resting HR"      value={analysis.metrics.hr_today ? `${analysis.metrics.hr_today} bpm` : '—'} />
-              <MetricRow label="HR deviation"    value={analysis.metrics.hr_elevation != null ? `${analysis.metrics.hr_elevation > 0 ? '+' : ''}${analysis.metrics.hr_elevation} bpm` : '—'} />
-              <MetricRow label="Body Battery"    value={analysis.metrics.bb_today_high != null ? `${analysis.metrics.bb_today_high}/100` : '—'} note={analysis.metrics.bb_trend} />
+              <MetricRow label="HRV last night"  value={analysis.metrics.hrv_last ? `${Math.round(analysis.metrics.hrv_last)} ms` : '—'} />
+              <MetricRow label="HRV vs baseline" value={analysis.metrics.hrv_relative != null ? `${Math.round(analysis.metrics.hrv_relative * 100)}%` : '—'} note={analysis.metrics.hrv_status} />
+              <MetricRow label="Resting HR"      value={analysis.metrics.hr_today ? `${analysis.metrics.hr_today} bpm` : '—'} />
+              <MetricRow label="HR deviation"    value={analysis.metrics.hr_elevation != null ? `${analysis.metrics.hr_elevation > 0 ? '+' : ''}${analysis.metrics.hr_elevation} bpm` : '—'} />
+              <MetricRow label="Body Battery"    value={analysis.metrics.bb_today_high != null ? `${analysis.metrics.bb_today_high}/100` : '—'} note={analysis.metrics.bb_trend} />
             </MetricBlock>
 
             <MetricBlock title="Sleep (7-day avg)">
               <MetricRow label="Duration"        value={fmtH(analysis.metrics.sleep_7avg_s)} />
-              <MetricRow label="Score"           value={analysis.metrics.sleep_score_7avg != null ? `${analysis.metrics.sleep_score_7avg?.toFixed(0)}/100` : '—'} />
-              <MetricRow label="Deep sleep"      value={analysis.metrics.deep_pct_7avg != null ? `${analysis.metrics.deep_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 16–33%" />
-              <MetricRow label="REM"             value={analysis.metrics.rem_pct_7avg != null ? `${analysis.metrics.rem_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 21–31%" />
-              <MetricRow label="Sleep debt (7d)" value={analysis.metrics.sleep_debt_7d_h != null ? `${analysis.metrics.sleep_debt_7d_h}h` : '—'} />
+              <MetricRow label="Score"           value={analysis.metrics.sleep_score_7avg != null ? `${analysis.metrics.sleep_score_7avg?.toFixed(0)}/100` : '—'} />
+              <MetricRow label="Deep sleep"      value={analysis.metrics.deep_pct_7avg != null ? `${analysis.metrics.deep_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 16–33%" />
+              <MetricRow label="REM"             value={analysis.metrics.rem_pct_7avg != null ? `${analysis.metrics.rem_pct_7avg?.toFixed(1)}%` : '—'} note="opt: 21–31%" />
+              <MetricRow label="Sleep debt (7d)" value={analysis.metrics.sleep_debt_7d_h != null ? `${analysis.metrics.sleep_debt_7d_h}h` : '—'} />
             </MetricBlock>
 
             <MetricBlock title="Pain (30 days)">
@@ -115,7 +115,7 @@ export default function AIChat() {
               ) : (
                 <>
                   <MetricRow label="Last 7 days"   value={`${analysis.metrics.pain_7d?.length ?? 0} entries`} />
-                  <MetricRow label="Avg severity"  value={analysis.metrics.pain_severity_avg > 0 ? `${analysis.metrics.pain_severity_avg?.toFixed(1)}/5` : '—'} />
+                  <MetricRow label="Avg severity"  value={analysis.metrics.pain_severity_avg > 0 ? `${analysis.metrics.pain_severity_avg?.toFixed(1)}/5` : '—'} />
                   {analysis.metrics.chronic_pain_parts?.map(cp => (
                     <MetricRow key={cp.body_part} label={`Chronic: ${cp.body_part}`} value={`${cp.count}x, sev: ${cp.avg_severity}`} />
                   ))}
@@ -143,9 +143,9 @@ export default function AIChat() {
                     <tr key={i} className="border-b border-border last:border-b-0">
                       <td className="px-3 py-2 text-ink-2">{r.date}</td>
                       <td className="px-3 py-2 text-accent font-semibold">{r.km}</td>
-                      <td className="px-3 py-2">{r.pace_s ? `${Math.floor(r.pace_s/60)}:${String(Math.round(r.pace_s%60)).padStart(2,'0')}` : '—'}</td>
-                      <td className="px-3 py-2">{r.avg_hr ? `${r.avg_hr} bpm` : '—'}</td>
-                      <td className="px-3 py-2">{r.aerobic_te ? r.aerobic_te.toFixed(1) : '—'}</td>
+                      <td className="px-3 py-2">{r.pace_s ? `${Math.floor(r.pace_s/60)}:${String(Math.round(r.pace_s%60)).padStart(2,'0')}` : '—'}</td>
+                      <td className="px-3 py-2">{r.avg_hr ? `${r.avg_hr} bpm` : '—'}</td>
+                      <td className="px-3 py-2">{r.aerobic_te ? r.aerobic_te.toFixed(1) : '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -157,7 +157,7 @@ export default function AIChat() {
           <Card className="p-5">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <div className={ST}>LLM Prompt — send to any AI</div>
+                <div className={ST}>LLM Prompt — send to any AI</div>
                 <div className="text-[11px] text-ink-3 mt-1">
                   Copy and paste into ChatGPT, Claude, Gemini, or any other AI chat.
                 </div>
@@ -280,6 +280,6 @@ function acwrLabel(acwr) {
 }
 
 function fmtH(s) {
-  if (!s) return '—'
+  if (!s) return '—'
   return `${Math.floor(s / 3600)}h ${Math.round((s % 3600) / 60)}m`
 }

@@ -9,7 +9,7 @@ import { api } from '../api/client.js'
 import { formatDate, today } from '../utils/format.js'
 
 const TAGS = ['pain', 'fatigue', 'great', 'injury', 'PR', 'easy', 'hard', 'rest']
-const WELLBEING_EMOJI = ['', 'ðŸ˜ž', 'ðŸ˜•', 'ðŸ˜', 'ðŸ™‚', 'ðŸ˜„']
+const WELLBEING_EMOJI = ['', '😞', '😕', '😐', '🙂', '😄']
 
 function useNotes() {
   return useFetch(() => api.getNotes({ limit: 100 }), [])

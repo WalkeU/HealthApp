@@ -4,6 +4,9 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 
 ## [Unreleased]
 
+- Fixed: láthatatlan vezérlőkarakter (U+009D) eltávolítva 18 helyről az `AIChat.jsx`-ben — ez okozta a foltos "—" megjelenést az Insights oldal kis betűméretű értékeinél
+- Fixed: mojibake emoji-korrupció javítva a `Notes.jsx`-ben (wellbeing hangulatjelek: 😞 😕 😐 🙂 😄)
+
 ## [0.0.3] - 2026-08-20
 
 - Fixed: megmaradt mojibake karakterek kijavítva `AIChat.jsx`, `Import.jsx`, `RunsList.jsx`-ben (a korábbi javítás nem volt teljes) — köztük az Apple Health import instrukció nyilai és a Garmin jelszó placeholder pöttyei
