@@ -4,6 +4,8 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-20
+
 - Added: Garmin sync-nél kiválasztható, hány visszamenő edzést húzzon le (50/100/200/500/1000) az Import oldalon
 - Fixed: láthatatlan vezérlőkarakter (U+009D) eltávolítva 18 helyről az `AIChat.jsx`-ben — ez okozta a foltos "—" megjelenést az Insights oldal kis betűméretű értékeinél
 - Fixed: mojibake emoji-korrupció javítva a `Notes.jsx`-ben (wellbeing hangulatjelek: 😞 😕 😐 🙂 😄)
@@ -30,7 +32,8 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 - Added: `CLAUDE.md` és `docs/DEV.md` projekt-dokumentáció
 - Known gap: `services/ai.js` LLM hívás (anthropic/openai/ollama) még stub, `/api/ai/chat` 503-at ad
 
-[Unreleased]: https://github.com/WalkeU/HealthApp/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/WalkeU/HealthApp/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/WalkeU/HealthApp/compare/v0.0.3...v0.1.0
 [0.0.3]: https://github.com/WalkeU/HealthApp/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/WalkeU/HealthApp/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/WalkeU/HealthApp/releases/tag/v0.0.1
