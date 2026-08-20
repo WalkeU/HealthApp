@@ -4,6 +4,10 @@ Formátum: [Keep a Changelog](https://keepachangelog.com/) + [Semantic Versionin
 
 ## [Unreleased]
 
+### Fixed
+
+- Elrontott UTF-8 (mojibake) karakterek javítva a Dashboard, RunsList, RunDetail, Import, Settings, AIChat oldalakon (kötőjelek, pontok, pipa/kereszt ikonok)
+
 ## [0.0.1] - 2026-08-20
 
 ### Added

@@ -179,7 +179,7 @@ function AddRunForm({ onClose, onSaved }) {
             className="bg-input border border-border rounded text-ink px-3 py-2 outline-none focus:border-accent transition-colors" />
         </div>
         <div className="flex gap-2 mt-1">
-          <Button type="submit" disabled={saving}>{saving ? 'SavingÃ¢â‚¬Â¦' : 'Save'}</Button>
+          <Button type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
         </div>
       </form>

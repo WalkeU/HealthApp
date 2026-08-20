@@ -109,7 +109,7 @@ function AppleHealthSection() {
       {file && (
         <div className="mt-3">
           <Button onClick={doImport} disabled={loading}>
-            {loading ? <><Spinner size={14} />Parsingâ€¦</> : 'Import'}
+            {loading ? <><Spinner size={14} />Parsing…</> : 'Import'}
           </Button>
         </div>
       )}
@@ -153,7 +153,7 @@ function StravaSection({ config }) {
           <>
             <Button onClick={sync} disabled={loading}>
               <RefreshCw size={13} className={loading ? 'animate-spin-slow' : ''} />
-              {loading ? 'Syncingâ€¦' : 'Sync Activities'}
+              {loading ? 'Syncing…' : 'Sync Activities'}
             </Button>
             <Button variant="ghost" onClick={() => window.location.href = '/api/sync/strava/auth'}>
               Reconnect
@@ -236,7 +236,7 @@ function GarminSection({ config }) {
         disabled={loading || (!form.garmin_email && !hasCredentials)}
       >
         <RefreshCw size={13} className={loading ? 'animate-spin-slow' : ''} />
-        {loading ? 'Syncingâ€¦' : 'Sync Garmin'}
+        {loading ? 'Syncing…' : 'Sync Garmin'}
       </Button>
 
       {result && (
@@ -244,8 +244,8 @@ function GarminSection({ config }) {
           <div className="px-3 py-2 bg-surface border-b border-border text-xs font-semibold">
             <span className={result.ok ? 'text-accent' : 'text-danger'}>
               {result.ok
-                ? `âœ“ Done "" ${result.activitiesImported} activities, ${result.healthImported} health days`
-                : `âœ— ${result.message}`}
+                ? `✓ Done — ${result.activitiesImported} activities, ${result.healthImported} health days`
+                : `✗ ${result.message}`}
             </span>
           </div>
           {result.log?.length > 0 && (

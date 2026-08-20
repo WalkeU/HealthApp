@@ -44,7 +44,7 @@ export default function Settings() {
     try {
       const payload = { ...form }
       for (const [k, v] of Object.entries(payload)) {
-        if (v === 'â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢') delete payload[k]
+        if (v === '••••••••') delete payload[k]
       }
       await api.saveConfig(payload)
       setSaved(true)
@@ -79,7 +79,7 @@ export default function Settings() {
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={LABEL_CLS}>Client Secret</label>
-              <input type="password" value={form.strava_client_secret || ''} onChange={e => set('strava_client_secret', e.target.value)} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+              <input type="password" value={form.strava_client_secret || ''} onChange={e => set('strava_client_secret', e.target.value)} placeholder="••••••••"
                 className={INPUT_CLS} />
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function Settings() {
             </div>
             <div className="flex flex-col gap-1.5">
               <label className={LABEL_CLS}>Password</label>
-              <input type="password" value={form.garmin_password || ''} onChange={e => set('garmin_password', e.target.value)} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+              <input type="password" value={form.garmin_password || ''} onChange={e => set('garmin_password', e.target.value)} placeholder="••••••••"
                 className={INPUT_CLS} />
             </div>
           </div>
@@ -130,7 +130,7 @@ export default function Settings() {
           {aiProvider === 'anthropic' && (
             <div className="flex flex-col gap-1.5 mb-4">
               <label className={LABEL_CLS}>Anthropic API Key</label>
-              <input type="password" value={form.anthropic_api_key || ''} onChange={e => set('anthropic_api_key', e.target.value)} placeholder="sk-ant-â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+              <input type="password" value={form.anthropic_api_key || ''} onChange={e => set('anthropic_api_key', e.target.value)} placeholder="sk-ant-••••••••"
                 className={INPUT_CLS} />
             </div>
           )}
@@ -138,7 +138,7 @@ export default function Settings() {
           {aiProvider === 'openai' && (
             <div className="flex flex-col gap-1.5 mb-4">
               <label className={LABEL_CLS}>OpenAI API Key</label>
-              <input type="password" value={form.openai_api_key || ''} onChange={e => set('openai_api_key', e.target.value)} placeholder="sk-â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+              <input type="password" value={form.openai_api_key || ''} onChange={e => set('openai_api_key', e.target.value)} placeholder="sk-••••••••"
                 className={INPUT_CLS} />
             </div>
           )}
@@ -162,7 +162,7 @@ export default function Settings() {
         <div className="flex items-center gap-3">
           <Button type="submit" disabled={saving}>
             <Save size={13} />
-            {saving ? 'Savingâ€¦' : 'Save Settings'}
+            {saving ? 'Saving…' : 'Save Settings'}
           </Button>
           {saved && <span className="text-xs text-accent font-semibold">Saved</span>}
         </div>

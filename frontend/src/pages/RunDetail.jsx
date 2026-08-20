@@ -75,9 +75,9 @@ export default function RunDetail() {
             <Stat label="Avg HR"   value={run.avg_hr ? `${run.avg_hr} bpm` : null} />
             <Stat label="Max HR"   value={run.max_hr ? `${run.max_hr} bpm` : null} />
             <Stat label="Zone 1"   value={fmtTime(run.hr_zone1_s)} sub="<60%" />
-            <Stat label="Zone 2"   value={fmtTime(run.hr_zone2_s)} sub="60â€“70%" />
-            <Stat label="Zone 3"   value={fmtTime(run.hr_zone3_s)} sub="70â€“80%" />
-            <Stat label="Zone 4"   value={fmtTime(run.hr_zone4_s)} sub="80â€“90%" />
+            <Stat label="Zone 2"   value={fmtTime(run.hr_zone2_s)} sub="60–70%" />
+            <Stat label="Zone 3"   value={fmtTime(run.hr_zone3_s)} sub="70–80%" />
+            <Stat label="Zone 4"   value={fmtTime(run.hr_zone4_s)} sub="80–90%" />
             <Stat label="Zone 5"   value={fmtTime(run.hr_zone5_s)} sub=">90%" />
           </StatSection>
 

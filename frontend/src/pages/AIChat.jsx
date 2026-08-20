@@ -104,8 +104,8 @@ export default function AIChat() {
             <MetricBlock title="Sleep (7-day avg)">
               <MetricRow label="Duration"        value={fmtH(analysis.metrics.sleep_7avg_s)} />
               <MetricRow label="Score"           value={analysis.metrics.sleep_score_7avg != null ? `${analysis.metrics.sleep_score_7avg?.toFixed(0)}/100` : 'Ã¢â‚¬â€'} />
-              <MetricRow label="Deep sleep"      value={analysis.metrics.deep_pct_7avg != null ? `${analysis.metrics.deep_pct_7avg?.toFixed(1)}%` : 'Ã¢â‚¬â€'} note="opt: 16Ã¢â‚¬â€œ33%" />
-              <MetricRow label="REM"             value={analysis.metrics.rem_pct_7avg != null ? `${analysis.metrics.rem_pct_7avg?.toFixed(1)}%` : 'Ã¢â‚¬â€'} note="opt: 21Ã¢â‚¬â€œ31%" />
+              <MetricRow label="Deep sleep"      value={analysis.metrics.deep_pct_7avg != null ? `${analysis.metrics.deep_pct_7avg?.toFixed(1)}%` : 'Ã¢â‚¬â€'} note="opt: 16–33%" />
+              <MetricRow label="REM"             value={analysis.metrics.rem_pct_7avg != null ? `${analysis.metrics.rem_pct_7avg?.toFixed(1)}%` : 'Ã¢â‚¬â€'} note="opt: 21–31%" />
               <MetricRow label="Sleep debt (7d)" value={analysis.metrics.sleep_debt_7d_h != null ? `${analysis.metrics.sleep_debt_7d_h}h` : 'Ã¢â‚¬â€'} />
             </MetricBlock>
 
@@ -274,8 +274,8 @@ function acwrLabel(acwr) {
   if (acwr == null) return null
   if (acwr > 1.5) return 'Ã°Å¸â€Â´ HIGH RISK'
   if (acwr > 1.3) return 'Ã°Å¸Å¸Â¡ elevated'
-  if (acwr >= 0.8) return 'Ã¢Å“â€œ optimal'
-  if (acwr < 0.5) return 'Ã¢â€ â€œ low'
+  if (acwr >= 0.8) return '✓ optimal'
+  if (acwr < 0.5) return '↓ low'
   return null
 }
 
