@@ -21,7 +21,7 @@ function useSleepHistory() {
 }
 
 const fmtH = (s) => {
-  if (!s) return '"”'
+  if (!s) return '—'
   const h = Math.floor(s / 3600), m = Math.round((s % 3600) / 60)
   return h > 0 ? `${h}h ${m}m` : `${m}m`
 }
@@ -196,8 +196,8 @@ function SleepDetail({ record: r }) {
         <div className="pt-4 border-t border-border">
           <div className={SECTION_LABEL}>HRV</div>
           <div className="flex gap-2 flex-wrap">
-            <StatPill label="Last night"  value={r.hrv            ? `${Math.round(r.hrv)} ms`            : '"”'} />
-            <StatPill label="Weekly avg"  value={r.hrv_weekly_avg ? `${Math.round(r.hrv_weekly_avg)} ms` : '"”'} />
+            <StatPill label="Last night"  value={r.hrv            ? `${Math.round(r.hrv)} ms`            : '—'} />
+            <StatPill label="Weekly avg"  value={r.hrv_weekly_avg ? `${Math.round(r.hrv_weekly_avg)} ms` : '—'} />
             {r.hrv_status && <StatPill label="Status" value={r.hrv_status} accent={r.hrv_status === 'BALANCED'} />}
           </div>
         </div>
@@ -255,7 +255,7 @@ function StatPill({ label, value, accent }) {
 }
 
 function formatDate(str) {
-  if (!str) return '"”'
+  if (!str) return '—'
   const d = new Date(str + 'T00:00:00')
   return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
 }

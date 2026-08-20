@@ -4,6 +4,9 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 
 ## [Unreleased]
 
+- Changed: Garmin sync mostantól 0-t ír a `nap_duration_s`/`nap_count` mezőkbe, ha volt alvás-adat a napra de nem volt szundi (korábban `null`-t írt, ami megkülönböztethetetlen volt attól, hogy nincs is adat a napra)
+- Fixed: törött placeholder karakterek (`"”` szó szerint idézőjelek `—` helyett) javítva a `SleepHistory.jsx` (4 hely) és `PainLog.jsx` (1 hely) oldalakon
+
 ## [0.1.0] - 2026-08-20
 
 - Added: Garmin sync-nél kiválasztható, hány visszamenő edzést húzzon le (50/100/200/500/1000) az Import oldalon

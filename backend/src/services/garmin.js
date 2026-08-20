@@ -229,8 +229,8 @@ async function fetchDailyHealth(client, date) {
   const sleep_feedback    = dto?.sleepScoreFeedback                    ?? null;
   // sleepNeed.baseline/actual are in minutes
   const sleep_need_min    = dto?.sleepNeed?.actual ?? dto?.nextSleepNeed?.actual ?? null;
-  const nap_duration_s    = dto?.napTimeSeconds   ?? null;
-  const nap_count         = Array.isArray(dto?.dailyNapDTOS) ? dto.dailyNapDTOS.length : (nap_duration_s > 0 ? 1 : null);
+  const nap_duration_s    = dto?.napTimeSeconds   ?? (dto ? 0 : null);
+  const nap_count         = Array.isArray(dto?.dailyNapDTOS) ? dto.dailyNapDTOS.length : (dto ? 0 : null);
   const total_steps       = typeof steps === 'number' ? steps : null;
   const weight_kg         = weight?.dailyWeightSummaries?.[0]?.weightInGrams
     ? weight.dailyWeightSummaries[0].weightInGrams / 1000

@@ -112,7 +112,7 @@ export default function PainLog() {
 
               <div className="flex flex-col gap-1.5">
                 <label className={LABEL_CLS}>
-                  Severity "” <span className="font-bold" style={{ color: SEVERITY_COLOR[form.severity] }}>
+                  Severity — <span className="font-bold" style={{ color: SEVERITY_COLOR[form.severity] }}>
                     {SEVERITY_LABEL[form.severity]}
                   </span>
                 </label>
