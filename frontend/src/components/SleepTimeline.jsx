@@ -6,8 +6,8 @@ import Spinner from './ui/Spinner.jsx'
 const PHASE = {
   0: { label: 'Deep',  color: '#6366f1' },
   1: { label: 'Light', color: '#60a5fa' },
-  2: { label: 'Awake', color: '#f59e0b' },
-  3: { label: 'REM',   color: '#00ff87' },
+  2: { label: 'REM',   color: '#00ff87' },
+  3: { label: 'Awake', color: '#f59e0b' },
 }
 
 function fmtGMT(str) {
@@ -58,7 +58,7 @@ export default function SleepTimeline({ date }) {
                 left:         `${(s - tMin) / span * 100}%`,
                 width:        `${(e - s)   / span * 100}%`,
                 background:   p.color,
-                opacity:      seg.activityLevel === 2 ? 0.45 : 1,
+                opacity:      seg.activityLevel === 3 ? 0.45 : 1,
                 borderRadius,
               }}
             />
@@ -94,7 +94,7 @@ function PhaseSummary({ levels }) {
 
   return (
     <div className="flex gap-3.5 flex-wrap">
-      {[3, 0, 1, 2].map(level => {
+      {[2, 0, 1, 3].map(level => {
         const p  = PHASE[level]
         const ms = totals[level] ?? 0
         if (!ms) return null
@@ -104,7 +104,7 @@ function PhaseSummary({ levels }) {
           <div key={level} className="flex items-center gap-[5px]">
             <div
               className="w-2 h-2 rounded-sm"
-              style={{ background: p.color, opacity: level === 2 ? 0.5 : 1 }}
+              style={{ background: p.color, opacity: level === 3 ? 0.5 : 1 }}
             />
             <span className="text-[10px] text-ink-3">{p.label}</span>
             <span className="text-[11px] font-semibold">

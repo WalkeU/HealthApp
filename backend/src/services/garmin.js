@@ -211,11 +211,15 @@ async function fetchDailyHealth(client, date) {
 
   const resting_hr        = hr?.restingHeartRate                       ?? null;
   const max_hr_day        = hr?.maxHeartRate                           ?? null;
-  const sleep_duration_s  = dto?.sleepTimeSeconds                      ?? null;
   const deep_sleep_s      = dto?.deepSleepSeconds                      ?? null;
   const light_sleep_s     = dto?.lightSleepSeconds                     ?? null;
   const rem_sleep_s       = dto?.remSleepSeconds                       ?? null;
   const awake_s           = dto?.awakeSleepSeconds                     ?? null;
+  // Garmin's sleepTimeSeconds excludes time spent awake in bed; add it back so
+  // this matches "total sleep" as shown on the watch/Garmin Connect app.
+  const sleep_duration_s  = dto?.sleepTimeSeconds != null
+    ? dto.sleepTimeSeconds + (awake_s ?? 0)
+    : null;
   const sleep_score       = dto?.sleepScores?.overall?.value           ?? null;
   const sleep_rem_pct     = dto?.sleepScores?.remPercentage?.value     ?? null;
   const sleep_deep_pct    = dto?.sleepScores?.deepPercentage?.value    ?? null;
