@@ -101,12 +101,12 @@ export default function RunsList() {
                     className="border-b border-border last:border-b-0 cursor-pointer transition-colors hover:[&>td]:bg-hover">
                     <td className="px-4 py-3 text-[12px] text-ink-2">{formatDate(run.date)}</td>
                     <td className="px-4 py-3 max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap text-[13px]">
-                      {run.name || <span className="text-ink-3">Ã¢â‚¬â€</span>}
+                      {run.name || <span className="text-ink-3">—</span>}
                     </td>
                     <td className="px-4 py-3 text-[13px] text-accent font-semibold">{formatDistance(run.distance_m)}</td>
                     <td className="px-4 py-3 text-[13px]">{formatDuration(run.duration_s)}</td>
                     <td className="px-4 py-3 text-[13px]">{formatPace(run.avg_pace_s)}</td>
-                    <td className="px-4 py-3 text-[13px]">{run.avg_hr ? `${run.avg_hr} bpm` : 'Ã¢â‚¬â€'}</td>
+                    <td className="px-4 py-3 text-[13px]">{run.avg_hr ? `${run.avg_hr} bpm` : '—'}</td>
                     <td className="px-4 py-3 text-[11px] text-ink-3">{run.source}</td>
                   </tr>
                 ))}

@@ -53,7 +53,7 @@ function ResultBanner({ result }) {
     ].join(' ')}>
       {result.message || (ok
         ? `Done. Imported ${result.activitiesImported ?? result.imported ?? 0} activities, ${result.healthImported ?? 0} health records.`
-        : 'Sync failed "â€ check credentials.')}
+        : 'Sync failed — check credentials.')}
     </div>
   )
 }
@@ -86,7 +86,7 @@ function AppleHealthSection() {
 
   return (
     <Card>
-      <SectionHeader icon={Download} title="Apple Health" sub="Export export.xml from iPhone â†’ Health â†’ Profile â†’ Export All Health Data" />
+      <SectionHeader icon={Download} title="Apple Health" sub="Export export.xml from iPhone → Health → Profile → Export All Health Data" />
       <div className="h-px bg-border my-5" />
       <div
         className={[
@@ -141,7 +141,7 @@ function StravaSection({ config }) {
       <SectionHeader
         icon={RefreshCw}
         title="Strava"
-        sub={connected ? `Connected Â· last sync: ${config.strava_last_sync?.slice(0, 10) || 'never'}` : 'Not connected'}
+        sub={connected ? `Connected · last sync: ${config.strava_last_sync?.slice(0, 10) || 'never'}` : 'Not connected'}
       />
       <div className="h-px bg-border my-5" />
       <div className="flex gap-2">
@@ -203,7 +203,7 @@ function GarminSection({ config }) {
         icon={RefreshCw}
         title="Garmin"
         sub={hasCredentials
-          ? `${config.garmin_email} Â· last sync: ${lastSync ? lastSync.slice(0, 16).replace('T', ' ') : 'never'}`
+          ? `${config.garmin_email} · last sync: ${lastSync ? lastSync.slice(0, 16).replace('T', ' ') : 'never'}`
           : 'Enter credentials to sync'}
       />
       <div className="h-px bg-border my-5" />
@@ -223,7 +223,7 @@ function GarminSection({ config }) {
           <label className={LABEL_CLS}>Password</label>
           <input
             type="password"
-            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+            placeholder="••••••••"
             value={form.garmin_password}
             onChange={e => setForm(f => ({ ...f, garmin_password: e.target.value }))}
             className={INPUT_CLS}

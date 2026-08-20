@@ -4,6 +4,14 @@ Formátum: [Keep a Changelog](https://keepachangelog.com/) + [Semantic Versionin
 
 ## [Unreleased]
 
+### Changed
+
+- Világosabb, kontrasztosabb szövegszínek az egész UI-ban (`--color-ink`, `--color-ink-2`, `--color-ink-3`) — a régi `ink-3` alig 2:1 kontrasztarányban volt a háttérrel, most minden szint legalább ~4.5:1 fölött van
+
+### Fixed
+
+- Megmaradt mojibake karakterek kijavítva `AIChat.jsx`, `Import.jsx`, `RunsList.jsx`-ben (a korábbi javítás nem volt teljes) — köztük az Apple Health import instrukció nyilai és a Garmin jelszó placeholder pöttyei
+
 ## [0.0.2] - 2026-08-20
 
 ### Added
