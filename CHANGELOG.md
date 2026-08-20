@@ -4,6 +4,8 @@ Formátum: [Keep a Changelog](https://keepachangelog.com/) + [Semantic Versionin
 
 ## [Unreleased]
 
+## [0.0.2] - 2026-08-20
+
 ### Added
 
 - App verziószám megjelenítve a desktop sidebar alján (`frontend/package.json`-ból)
@@ -31,5 +33,6 @@ Formátum: [Keep a Changelog](https://keepachangelog.com/) + [Semantic Versionin
 
 - `services/ai.js` LLM hívás (anthropic/openai/ollama) még stub, `/api/ai/chat` 503-at ad
 
-[Unreleased]: https://github.com/WalkeU/HealthApp/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/WalkeU/HealthApp/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/WalkeU/HealthApp/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/WalkeU/HealthApp/releases/tag/v0.0.1
