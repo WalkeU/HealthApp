@@ -8,7 +8,8 @@ Teljes eredeti terv: [PLAN.md](PLAN.md). Garmin mezők jelentése: [docs/garmin-
 
 A user kizárólag LLM-mel fejleszt, éles szerverre `git pull`-lal deployol. Ezért ez a workflow áll fenn, külön kérés nélkül is:
 
-- **Minden alkalommal, amikor commitolsz** (a usernek erre külön rá kell kérnie, mint minden commitra — ez nem változik): vegyél fel a commit tartalmának megfelelő bullet(oka)t a `CHANGELOG.md` `[Unreleased]` szekciójába, a Keep a Changelog kategóriák alatt (`Added`/`Changed`/`Fixed`/`Removed`). Ezt automatikusan tedd, a commit részeként, ne kérdezz rá.
+- **Minden alkalommal, amikor commitolsz** (a usernek erre külön rá kell kérnie, mint minden commitra — ez nem változik): vegyél fel a commit tartalmának megfelelő sor(oka)t a `CHANGELOG.md` `[Unreleased]` szekciójába. Ezt automatikusan tedd, a commit részeként, ne kérdezz rá.
+- **CHANGELOG formátum: lapos lista, NINCS csoportosítás.** Ne használj `### Added` / `### Changed` / `### Fixed` alcím-szekciókat. Minden bejegyzés egy önálló bullet sor, a sor elején a típus szóval (`Added:`, `Changed:`, `Fixed:`, `Removed:`), utána a leírás — pl. `- Fixed: mojibake karakterek javítva az AIChat oldalon`. Egy verzió alatt egyszerűen egymás alatt sorakoznak ezek, típustól függetlenül, a hozzáadás sorrendjében.
 - **NE bumpolj verziószámot, NE hozz létre git tag-et, NE mozgasd át az Unreleased bejegyzéseket** — amíg a user nem mondja kifejezetten, hogy release-elni akar (pl. "release-eljünk", "verziózzuk", "csináljunk egy release-t").
 - **Amikor a user release-t kér**, ezt csináld végig:
   1. Nézd át a `[Unreleased]` alatti bejegyzéseket, döntsd el a semver bump típusát (PATCH = fix, MINOR = új funkció, MAJOR = breaking change / DB migráció) és mondd meg a usernek, mire jutottál.

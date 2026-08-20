@@ -1,45 +1,27 @@
 # Changelog
 
-Formátum: [Keep a Changelog](https://keepachangelog.com/) + [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH).
+Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soronként, csoportosítás nélkül — minden sor jelzi mi történt (Added/Changed/Fixed/Removed).
 
 ## [Unreleased]
 
-### Changed
-
-- Világosabb, kontrasztosabb szövegszínek az egész UI-ban (`--color-ink`, `--color-ink-2`, `--color-ink-3`) — a régi `ink-3` alig 2:1 kontrasztarányban volt a háttérrel, most minden szint legalább ~4.5:1 fölött van
-
-### Fixed
-
-- Megmaradt mojibake karakterek kijavítva `AIChat.jsx`, `Import.jsx`, `RunsList.jsx`-ben (a korábbi javítás nem volt teljes) — köztük az Apple Health import instrukció nyilai és a Garmin jelszó placeholder pöttyei
+- Fixed: megmaradt mojibake karakterek kijavítva `AIChat.jsx`, `Import.jsx`, `RunsList.jsx`-ben (a korábbi javítás nem volt teljes) — köztük az Apple Health import instrukció nyilai és a Garmin jelszó placeholder pöttyei
+- Changed: világosabb, kontrasztosabb szövegszínek az egész UI-ban (`--color-ink`, `--color-ink-2`, `--color-ink-3`) — a régi `ink-3` alig 2:1 kontrasztarányban volt a háttérrel, most minden szint legalább ~4.5:1 fölött van
 
 ## [0.0.2] - 2026-08-20
 
-### Added
-
-- App verziószám megjelenítve a desktop sidebar alján (`frontend/package.json`-ból)
-
-### Changed
-
-- Release-folyamat rövid `npm run release:patch/minor/major` scriptekre egyszerűsítve (gyökér `package.json`), `CLAUDE.md`/`docs/DEV.md` frissítve
-
-### Fixed
-
-- Elrontott UTF-8 (mojibake) karakterek javítva a Dashboard, RunsList, RunDetail, Import, Settings, AIChat oldalakon (kötőjelek, pontok, pipa/kereszt ikonok)
+- Added: app verziószám megjelenítve a desktop sidebar alján (`frontend/package.json`-ból)
+- Changed: release-folyamat rövid `npm run release:patch/minor/major` scriptekre egyszerűsítve (gyökér `package.json`), `CLAUDE.md`/`docs/DEV.md` frissítve
+- Fixed: elrontott UTF-8 (mojibake) karakterek javítva a Dashboard, RunsList, RunDetail, Import, Settings, AIChat oldalakon (kötőjelek, pontok, pipa/kereszt ikonok)
 
 ## [0.0.1] - 2026-08-20
 
-### Added
-
-- Backend: Express API, SQLite séma (activities, health_daily, notes, pain_log, config)
-- Garmin, Strava, Apple Health szinkron/import — mindhárom implementálva
-- Algoritmikus insights motor (`services/insights.js`): ACWR training load, HRV, resting HR, alvás, body battery, fájdalom flag-ek + score-ok
-- Frontend: Dashboard, RunsList, RunDetail, Notes, PainLog, Import, Settings, AIChat, SleepHistory oldalak
-- Docker dev/prod compose setup, sqlite-web admin UI
-- `CLAUDE.md` és `docs/DEV.md` projekt-dokumentáció
-
-### Known gaps
-
-- `services/ai.js` LLM hívás (anthropic/openai/ollama) még stub, `/api/ai/chat` 503-at ad
+- Added: backend Express API, SQLite séma (activities, health_daily, notes, pain_log, config)
+- Added: Garmin, Strava, Apple Health szinkron/import — mindhárom implementálva
+- Added: algoritmikus insights motor (`services/insights.js`) — ACWR training load, HRV, resting HR, alvás, body battery, fájdalom flag-ek + score-ok
+- Added: frontend Dashboard, RunsList, RunDetail, Notes, PainLog, Import, Settings, AIChat, SleepHistory oldalak
+- Added: Docker dev/prod compose setup, sqlite-web admin UI
+- Added: `CLAUDE.md` és `docs/DEV.md` projekt-dokumentáció
+- Known gap: `services/ai.js` LLM hívás (anthropic/openai/ollama) még stub, `/api/ai/chat` 503-at ad
 
 [Unreleased]: https://github.com/WalkeU/HealthApp/compare/v0.0.2...HEAD
 [0.0.2]: https://github.com/WalkeU/HealthApp/compare/v0.0.1...v0.0.2
