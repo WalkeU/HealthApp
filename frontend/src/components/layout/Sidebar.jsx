@@ -3,6 +3,7 @@ import {
   LayoutDashboard, Activity, Moon, BookOpen,
   Zap, Download, Settings, Bot, Heart,
 } from 'lucide-react'
+import pkg from '../../../package.json'
 
 const NAV = [
   { to: '/',         icon: LayoutDashboard, label: 'Dashboard', short: 'Home'     },
@@ -46,6 +47,9 @@ export default function Sidebar() {
               )}
             </NavLink>
           ))}
+        </div>
+        <div className="px-4 py-3 border-t border-border shrink-0">
+          <span className="text-[10px] font-medium tracking-wide text-ink-3">v{pkg.version}</span>
         </div>
       </nav>
 

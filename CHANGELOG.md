@@ -4,6 +4,10 @@ Formátum: [Keep a Changelog](https://keepachangelog.com/) + [Semantic Versionin
 
 ## [Unreleased]
 
+### Added
+
+- App verziószám megjelenítve a desktop sidebar alján (`frontend/package.json`-ból)
+
 ### Fixed
 
 - Elrontott UTF-8 (mojibake) karakterek javítva a Dashboard, RunsList, RunDetail, Import, Settings, AIChat oldalakon (kötőjelek, pontok, pipa/kereszt ikonok)
