@@ -115,6 +115,7 @@ export const healthQueries = {
         avg_stress, body_battery_high, body_battery_low, body_battery_charged, body_battery_drained,
         avg_respiration, min_respiration, max_respiration,
         avg_sleep_hr, awake_count, sleep_feedback, sleep_need_min,
+        nap_duration_s, nap_count,
         steps, weight_kg, raw_json
       ) VALUES (
         @date, @source,

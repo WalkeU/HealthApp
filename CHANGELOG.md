@@ -7,6 +7,7 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 - Added: Garmin sync-nél kiválasztható, hány visszamenő edzést húzzon le (50/100/200/500/1000) az Import oldalon
 - Fixed: láthatatlan vezérlőkarakter (U+009D) eltávolítva 18 helyről az `AIChat.jsx`-ben — ez okozta a foltos "—" megjelenést az Insights oldal kis betűméretű értékeinél
 - Fixed: mojibake emoji-korrupció javítva a `Notes.jsx`-ben (wellbeing hangulatjelek: 😞 😕 😐 🙂 😄)
+- Fixed: a `health_daily` (napi egészség/alvás) mentés minden Garmin sync-nél elhasalt egy SQL oszlop/érték-szám eltérés miatt ("35 values for 33 columns") — a `nap_duration_s` és `nap_count` mezők hiányoztak az INSERT oszloplistájából; sleep, HRV, resting HR, body battery adatok emiatt sosem mentődtek
 
 ## [0.0.3] - 2026-08-20
 
