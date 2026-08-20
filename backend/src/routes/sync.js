@@ -7,9 +7,10 @@ import { importAppleHealth } from '../services/appleHealth.js';
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 500 * 1024 * 1024 } });
 
-router.post('/garmin', async (_req, res) => {
+router.post('/garmin', async (req, res) => {
   try {
-    const result = await syncGarmin();
+    const limit = Number(req.body?.limit) || undefined;
+    const result = await syncGarmin({ limit });
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });

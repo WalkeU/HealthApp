@@ -62,7 +62,7 @@ export const api = {
 
   // Sync
   syncStrava: () => post('/sync/strava'),
-  syncGarmin: () => post('/sync/garmin'),
+  syncGarmin: (limit) => post('/sync/garmin', limit ? { limit } : undefined),
   importAppleHealth: (file) => {
     const fd = new FormData();
     fd.append('file', file);

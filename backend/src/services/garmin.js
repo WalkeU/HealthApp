@@ -4,7 +4,7 @@ import { configQueries, activityQueries, healthQueries } from '../db/queries.js'
 
 const HEALTH_DAYS_BACK = 30;
 
-export async function syncGarmin() {
+export async function syncGarmin({ limit } = {}) {
   const log = [];
   const ts    = () => new Date().toISOString().slice(11, 19);
   const info  = (msg) => { log.push(`[${ts()}] ${msg}`);   console.log(`[garmin] ${msg}`); };
@@ -26,7 +26,7 @@ export async function syncGarmin() {
   }
 
   const [activitiesImported, healthImported] = await Promise.all([
-    syncActivities(client, info, warn),
+    syncActivities(client, info, warn, limit),
     syncHealth(client, info, warn),
   ]);
 
@@ -37,9 +37,9 @@ export async function syncGarmin() {
 
 // ─── Activities ──────────────────────────────────────────────────────────────
 
-async function syncActivities(client, info, warn) {
+async function syncActivities(client, info, warn, requestedLimit) {
   const lastSync = configQueries.get('garmin_last_sync');
-  const limit    = lastSync ? 50 : 200;
+  const limit    = requestedLimit || (lastSync ? 50 : 200);
   info(`Fetching last ${limit} activities${lastSync ? ` (since ${lastSync.slice(0, 10)})` : ' (first sync)'}…`);
 
   let activities;

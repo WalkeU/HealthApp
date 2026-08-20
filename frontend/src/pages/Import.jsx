@@ -166,8 +166,11 @@ function StravaSection({ config }) {
   )
 }
 
+const GARMIN_HISTORY_OPTIONS = [50, 100, 200, 500, 1000]
+
 function GarminSection({ config }) {
   const [form, setForm] = useState({ garmin_email: config?.garmin_email || '', garmin_password: '' })
+  const [historyLimit, setHistoryLimit] = useState(50)
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const logRef = useRef(null)
@@ -181,7 +184,7 @@ function GarminSection({ config }) {
       if (form.garmin_password) patch.garmin_password = form.garmin_password
       if (Object.keys(patch).length) await api.saveConfig(patch)
 
-      const r = await api.syncGarmin()
+      const r = await api.syncGarmin(historyLimit)
       setResult(r)
     } catch (e) {
       setResult({ ok: false, log: [], message: e.message })
@@ -229,6 +232,19 @@ function GarminSection({ config }) {
             className={INPUT_CLS}
           />
         </div>
+      </div>
+
+      <div className="flex flex-col gap-1.5 mb-4 max-w-[200px]">
+        <label className={LABEL_CLS}>How far back</label>
+        <select
+          value={historyLimit}
+          onChange={e => setHistoryLimit(Number(e.target.value))}
+          className={INPUT_CLS}
+        >
+          {GARMIN_HISTORY_OPTIONS.map(n => (
+            <option key={n} value={n}>Last {n} activities</option>
+          ))}
+        </select>
       </div>
 
       <Button
