@@ -240,7 +240,7 @@ async function fetchDailyHealth(client, date) {
     ? weight.dailyWeightSummaries[0].weightInGrams / 1000
     : null;
 
-  const hasData = [resting_hr, sleep_duration_s, hrvSummary?.lastNight, total_steps].some(v => v != null);
+  const hasData = [resting_hr, sleep_duration_s, hrvSummary?.lastNightAvg, total_steps].some(v => v != null);
   if (!hasData) return null;
 
   return {
@@ -248,7 +248,7 @@ async function fetchDailyHealth(client, date) {
     source: 'garmin',
     resting_hr,
     max_hr_day,
-    hrv:            hrvSummary?.lastNight  ?? null,
+    hrv:            hrvSummary?.lastNightAvg  ?? null,
     hrv_weekly_avg: hrvSummary?.weeklyAvg  ?? null,
     hrv_status:     hrvSummary?.status     ?? null,
     sleep_duration_s,
