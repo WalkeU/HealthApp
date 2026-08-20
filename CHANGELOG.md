@@ -8,6 +8,10 @@ Formátum: [Keep a Changelog](https://keepachangelog.com/) + [Semantic Versionin
 
 - App verziószám megjelenítve a desktop sidebar alján (`frontend/package.json`-ból)
 
+### Changed
+
+- Release-folyamat rövid `npm run release:patch/minor/major` scriptekre egyszerűsítve (gyökér `package.json`), `CLAUDE.md`/`docs/DEV.md` frissítve
+
 ### Fixed
 
 - Elrontott UTF-8 (mojibake) karakterek javítva a Dashboard, RunsList, RunDetail, Import, Settings, AIChat oldalakon (kötőjelek, pontok, pipa/kereszt ikonok)

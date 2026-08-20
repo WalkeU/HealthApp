@@ -1,0 +1,10 @@
+{
+  "name": "healthapp",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "release:patch": "npm --prefix backend version patch --no-git-tag-version && npm --prefix frontend version patch --no-git-tag-version",
+    "release:minor": "npm --prefix backend version minor --no-git-tag-version && npm --prefix frontend version minor --no-git-tag-version",
+    "release:major": "npm --prefix backend version major --no-git-tag-version && npm --prefix frontend version major --no-git-tag-version"
+  }
+}

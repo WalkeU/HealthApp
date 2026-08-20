@@ -57,6 +57,16 @@ Leállítás:
 docker compose -f docker-compose.prod.yml down
 ```
 
+## Release (verzió bump)
+
+Mindkét `package.json` verzióját egyszerre bumpolja, git commit/tag nélkül (gyökér `package.json` script):
+
+```
+npm run release:patch
+```
+
+`patch` helyett `release:minor` / `release:major` a nagyobb ugráshoz. Utána: `CHANGELOG.md` frissítése, commit, `git tag -a vX.Y.Z`, push. Részletes folyamat: [CLAUDE.md](../CLAUDE.md#verziókövetés--release-folyamat--kötelező-szabály-minden-session-ben).
+
 ## Egyéb
 
 ```
