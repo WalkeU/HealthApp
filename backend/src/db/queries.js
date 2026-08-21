@@ -343,6 +343,12 @@ export const dashboardQueries = {
       SELECT * FROM activities WHERE type = 'run' ORDER BY date DESC LIMIT 10
     `).all();
 
-    return { weeklyKm, lastRun, avgPace, latestHealth, todayHealth, recentRuns };
+    const vo2maxRaw = configQueries.get('vo2max_current');
+    const vo2max = {
+      value: vo2maxRaw != null ? Number(vo2maxRaw) : null,
+      date:  configQueries.get('vo2max_current_date'),
+    };
+
+    return { weeklyKm, lastRun, avgPace, latestHealth, todayHealth, recentRuns, vo2max };
   },
 };

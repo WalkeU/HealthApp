@@ -75,6 +75,14 @@ export default function Dashboard() {
             {health.spo2_avg != null && (
               <StatCard label="SpO2" value={Math.round(health.spo2_avg)} unit="%" sub="7-day avg" />
             )}
+            {s.vo2max?.value != null && (
+              <StatCard
+                label="VO2max"
+                value={s.vo2max.value}
+                unit="ml/kg/min"
+                sub={s.vo2max.date ? formatDate(s.vo2max.date) : 'current'}
+              />
+            )}
           </div>
 
           {/* ── Charts ── */}

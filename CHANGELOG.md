@@ -9,6 +9,7 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 - Fixed: a fejléc "Sleep Duration" eddig csak a tényleges alvásidőt mutatta (Garmin `sleepTimeSeconds`, ébren-lét nélkül) — most az ébren töltött idő is bele van számítva, hogy egyezzen az órán/Garmin Connect-ben látott teljes alvásidővel
 - Fixed: a `SleepTimeline.jsx`-ben a REM és Awake fázis fel volt cserélve (Garmin `activityLevel` 2/3 kódok rosszul voltak hozzárendelve) — a Phase Timeline grafikon és jelmagyarázat eddig felcserélve mutatta a kettőt
 - Fixed: a napi HRV (HRV last night) mindig `null` volt, mert a kód a Garmin API `hrvSummary.lastNight` mezőjét olvasta, de a válasz valójában `lastNightAvg`-ot ad vissza — a weekly avg és status emiatt jó volt, csak az éjszakai érték hiányzott
+- Added: VO2max kártya a Dashboard-on, a Garmin `metrics-service/metrics/maxmet/latest` endpoint-ból — ez az órán/Garmin Connect-ben látott "jelenlegi" VO2max, ami eltérhet (és el is tér) az utolsó futáshoz mentett pillanatnyi becsléstől (`activities.vo2max`)
 
 ## [0.1.0] - 2026-08-20
 

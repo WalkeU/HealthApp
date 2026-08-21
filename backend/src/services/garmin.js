@@ -28,6 +28,7 @@ export async function syncGarmin({ limit } = {}) {
   const [activitiesImported, healthImported] = await Promise.all([
     syncActivities(client, info, warn, limit),
     syncHealth(client, info, warn),
+    syncVo2max(client, info, warn),
   ]);
 
   configQueries.set('garmin_last_sync', new Date().toISOString());
@@ -168,6 +169,30 @@ async function syncHealth(client, info, warn) {
 }
 
 const GC_API = 'https://connectapi.garmin.com';
+
+// ─── VO2max (current, watch-facing value) ─────────────────────────────────────
+//
+// The per-activity vo2max snapshot (activities.vo2max) reflects the estimate
+// at the time of that run. Garmin recalculates a single "current" VO2max
+// afterward that's what the watch/Garmin Connect actually displays -- fetch
+// that separately so the two can differ (they legitimately do).
+
+async function syncVo2max(client, info, warn) {
+  const dateStr = new Date().toISOString().slice(0, 10);
+  try {
+    const res = await client.get(`${GC_API}/metrics-service/metrics/maxmet/latest/${dateStr}`);
+    const vo2max = res?.generic?.vo2MaxValue ?? null;
+    if (vo2max == null) {
+      info('VO2max: no current value available.');
+      return;
+    }
+    configQueries.set('vo2max_current', String(vo2max));
+    configQueries.set('vo2max_current_date', res?.generic?.calendarDate ?? dateStr);
+    info(`VO2max (current): ${vo2max}`);
+  } catch (err) {
+    warn(`VO2max fetch failed: ${err.message}`);
+  }
+}
 
 async function fetchDailyHealth(client, date) {
   const dateStr = date.toISOString().slice(0, 10);
