@@ -17,7 +17,8 @@ A user kizárólag LLM-mel fejleszt, éles szerverre `git pull`-lal deployol. Ez
   3. Bumpold a verziószámot **mindkét** `package.json`-ban egyszerre: `npm run release:patch` (vagy `release:minor` / `release:major` a gyökér `package.json`-ból). Ez nem csinál saját commit/tag-et, azt a 4-5. lépés kezeli.
   4. Commitold ezt a release commitot.
   5. Hozz létre annotated git tag-et: `git tag -a vX.Y.Z -m "rövid összefoglaló"`.
-- **Push (remote-ra, origin-re) SOSE automatikus** — se sima commit, se release után. Csak akkor push-olj (commitot és/vagy tag-et), ha a user ezt külön, kifejezetten kéri.
+  6. **Push-old is automatikusan, külön kérés nélkül**: `git push origin main && git push origin vX.Y.Z`. Ez a lépés a release-folyamat automatikus, alapértelmezett része.
+- **Sima (nem release) commit után SOSE push-olj automatikusan** — az továbbra is csak a user külön, kifejezett kérésére megy fel.
 
 ## Stack
 
