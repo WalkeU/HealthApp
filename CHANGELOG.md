@@ -4,6 +4,8 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-21
+
 - Added: Garmin session (OAuth token) mentése és visszatöltése — a sync mostantól csak akkor jelentkezik be felhasználónév/jelszóval, ha nincs mentett session vagy az érvénytelen; ellenkező esetben újrahasznált tokennel fut, elkerülve a gyakori bejelentkezést
 - Added: automatikus Garmin sync 12 óránként a háttérben (`backend/src/index.js`), a manuális "Sync Garmin" gomb mellett
 
@@ -44,7 +46,8 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 - Added: `CLAUDE.md` és `docs/DEV.md` projekt-dokumentáció
 - Known gap: `services/ai.js` LLM hívás (anthropic/openai/ollama) még stub, `/api/ai/chat` 503-at ad
 
-[Unreleased]: https://github.com/WalkeU/HealthApp/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/WalkeU/HealthApp/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/WalkeU/HealthApp/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/WalkeU/HealthApp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/WalkeU/HealthApp/compare/v0.0.3...v0.1.0
 [0.0.3]: https://github.com/WalkeU/HealthApp/compare/v0.0.2...v0.0.3
