@@ -4,6 +4,28 @@ import { configQueries, activityQueries, healthQueries } from '../db/queries.js'
 
 const HEALTH_DAYS_BACK = 30;
 
+// Restores a saved OAuth session if we have one and it still works, so we
+// don't have to re-authenticate with the username/password every sync (which
+// risks tripping Garmin's login/MFA checks if done too often). Falls back to
+// a fresh login when there's no saved session or it's no longer valid.
+async function loginOrRestoreSession(client, email, info, warn) {
+  const saved = configQueries.get('garmin_token');
+  if (saved) {
+    try {
+      const { oauth1, oauth2 } = JSON.parse(saved);
+      client.loadToken(oauth1, oauth2);
+      await client.getUserSettings(); // cheap call to confirm the session is actually valid
+      info('Restored saved session (no login needed).');
+      return;
+    } catch (err) {
+      warn(`Saved session invalid (${err.message}), logging in fresh…`);
+    }
+  }
+  info(`Logging in as ${email}…`);
+  await client.login();
+  info('Login OK.');
+}
+
 export async function syncGarmin({ limit } = {}) {
   const log = [];
   const ts    = () => new Date().toISOString().slice(11, 19);
@@ -14,15 +36,20 @@ export async function syncGarmin({ limit } = {}) {
   const password = process.env.GARMIN_PASSWORD || configQueries.get('garmin_password');
   if (!email || !password) return { ok: false, log, message: 'Garmin credentials not configured.' };
 
-  info(`Logging in as ${email}…`);
   let client;
   try {
     client = new GarminConnect({ username: email, password });
-    await client.login();
-    info('Login OK.');
+    await loginOrRestoreSession(client, email, info, warn);
   } catch (err) {
     warn(`Login failed: ${err.message}`);
     return { ok: false, log, message: `Login failed: ${err.message}` };
+  }
+
+  // Persist the (possibly refreshed) session so the next sync can skip login.
+  try {
+    configQueries.set('garmin_token', JSON.stringify(client.exportToken()));
+  } catch (err) {
+    warn(`Could not save session token: ${err.message}`);
   }
 
   const [activitiesImported, healthImported] = await Promise.all([

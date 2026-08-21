@@ -4,6 +4,9 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 
 ## [Unreleased]
 
+- Added: Garmin session (OAuth token) mentése és visszatöltése — a sync mostantól csak akkor jelentkezik be felhasználónév/jelszóval, ha nincs mentett session vagy az érvénytelen; ellenkező esetben újrahasznált tokennel fut, elkerülve a gyakori bejelentkezést
+- Added: automatikus Garmin sync 12 óránként a háttérben (`backend/src/index.js`), a manuális "Sync Garmin" gomb mellett
+
 ## [0.2.0] - 2026-08-21
 
 - Changed: Garmin sync mostantól 0-t ír a `nap_duration_s`/`nap_count` mezőkbe, ha volt alvás-adat a napra de nem volt szundi (korábban `null`-t írt, ami megkülönböztethetetlen volt attól, hogy nincs is adat a napra)
