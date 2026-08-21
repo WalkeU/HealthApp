@@ -4,6 +4,8 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-21
+
 - Changed: Garmin sync mostantól 0-t ír a `nap_duration_s`/`nap_count` mezőkbe, ha volt alvás-adat a napra de nem volt szundi (korábban `null`-t írt, ami megkülönböztethetetlen volt attól, hogy nincs is adat a napra)
 - Fixed: törött placeholder karakterek (`"”` szó szerint idézőjelek `—` helyett) javítva a `SleepHistory.jsx` (4 hely) és `PainLog.jsx` (1 hely) oldalakon
 - Fixed: a fejléc "Sleep Duration" eddig csak a tényleges alvásidőt mutatta (Garmin `sleepTimeSeconds`, ébren-lét nélkül) — most az ébren töltött idő is bele van számítva, hogy egyezzen az órán/Garmin Connect-ben látott teljes alvásidővel
@@ -39,7 +41,8 @@ Formátum: [Semantic Versioning](https://semver.org/) (MAJOR.MINOR.PATCH). Soron
 - Added: `CLAUDE.md` és `docs/DEV.md` projekt-dokumentáció
 - Known gap: `services/ai.js` LLM hívás (anthropic/openai/ollama) még stub, `/api/ai/chat` 503-at ad
 
-[Unreleased]: https://github.com/WalkeU/HealthApp/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/WalkeU/HealthApp/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/WalkeU/HealthApp/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/WalkeU/HealthApp/compare/v0.0.3...v0.1.0
 [0.0.3]: https://github.com/WalkeU/HealthApp/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/WalkeU/HealthApp/compare/v0.0.1...v0.0.2
